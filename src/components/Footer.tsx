@@ -14,7 +14,7 @@ export const Footer = () => {
             © 2024
           </span>
           <span className="gradient-text font-orbitron font-bold">
-            JOHN DOE
+            Dharwin S
           </span>
         </div>
 

@@ -51,10 +51,10 @@ const CipherText = ({ text, delay = 0 }: { text: string, delay?: number }) => {
 
   return (
     <motion.h1 
-      aria-label="Dharwin S | Full-Stack Developer & ML Engineer"
+      aria-label="Dharwin S | Professional Full-Stack Developer & ML Engineer"
       className="font-space-grotesk text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 text-cosmic-cyan relative z-10"
     >
-      <span className="sr-only">Dharwin S | Full-Stack Developer & ML Engineer</span>
+      <span className="sr-only">Dharwin S | Professional Full-Stack Developer & ML Engineer</span>
       <span aria-hidden="true" className="flex flex-wrap justify-center lg:justify-start gap-x-1 gap-y-2">
         {displayText.map((letter, i) => (
           <motion.span

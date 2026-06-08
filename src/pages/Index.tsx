@@ -19,7 +19,7 @@ const MemoContact = memo(ContactSection);
 
 const Index = () => {
   useEffect(() => {
-    document.title = "Dharwin S | Full-Stack Developer & ML Engineer";
+    document.title = "Dharwin S | Professional Full-Stack Developer & ML Engineer";
     // Preload fonts
     document.fonts.ready.then(() => {
       // Fonts loaded
