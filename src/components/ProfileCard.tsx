@@ -47,7 +47,7 @@ interface ProfileCardProps {
 }
 
 const ProfileCardComponent = ({
-  avatarUrl = '/profile.jpg',
+  avatarUrl = '/profile1.jpg',
   iconUrl,
   grainUrl,
   innerGradient,

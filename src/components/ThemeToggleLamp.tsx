@@ -1,5 +1,5 @@
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const ThemeToggleLamp = () => {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -8,6 +8,31 @@ const ThemeToggleLamp = () => {
     }
     return 'dark';
   });
+
+  useEffect(() => {
+    const syncThemeClass = (currentTheme: 'dark' | 'light') => {
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    };
+
+    // Initial sync on mount
+    syncThemeClass(theme);
+
+    const handleThemeChange = () => {
+      const currentTheme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
+      setTheme(currentTheme);
+    };
+
+    window.addEventListener('theme-changed', handleThemeChange);
+    return () => {
+      window.removeEventListener('theme-changed', handleThemeChange);
+    };
+  }, [theme]);
 
   const y = useMotionValue(0);
   const springY = useSpring(y, { stiffness: 300, damping: 20 });
@@ -20,9 +45,12 @@ const ThemeToggleLamp = () => {
     setTheme(nextTheme);
     if (nextTheme === 'light') {
       document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
     } else {
+      document.documentElement.classList.add('dark');
       document.documentElement.classList.remove('light');
     }
+    window.dispatchEvent(new Event('theme-changed'));
   };
 
   const handleDragEnd = (_, info) => {

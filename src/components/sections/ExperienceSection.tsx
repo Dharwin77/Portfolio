@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useRef, useState } from 'react';
-import { Briefcase, MapPin, ExternalLink, Rocket, Globe, Building2, ChevronDown, ChevronUp } from 'lucide-react';
+import { useRef, useState, useEffect } from 'react';
+import { Briefcase, MapPin, Globe, Building2, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ProjectInExperience {
   id: number;
@@ -15,9 +15,9 @@ interface Experience {
   role: string;
   company: string;
   location: string;
-  eventName: string; // "Event Name" as requested
+  eventName: string;
   duration: string;
-  image: string; // Photos as requested
+  image: string;
   mainDescription: string;
   projects: ProjectInExperience[];
   skills: string[];
@@ -27,7 +27,7 @@ interface Experience {
 const experiences: Experience[] = [
   {
     id: 1,
-    role: 'Full-Stack Developer',
+    role: 'Full-Stack Developer Intern',
     company: 'CopterCode',
     location: 'IITM Research Park',
     eventName: 'Chennai,Tamilnadu',
@@ -42,159 +42,284 @@ const experiences: Experience[] = [
         liveUrl: 'https://veldursen.com/',
       }
     ],
-    skills: ['PyTorch', 'Rust', 'Kubernetes'],
+    skills: ['React', 'TypeScript', 'Tailwind CSS', 'SEO tools', 'CMS (Sanity)'],
     color: '#38BDF8',
   },
 ];
 
-const ExperienceCard = ({ exp, index, isInView }: { exp: Experience, index: number, isInView: boolean }) => {
-  const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
-  const isLeft = index % 2 === 0;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.6, delay: 0.1 + index * 0.15 }}
-      className="relative w-full mb-16 md:mb-24 px-4 sm:px-0"
-    >
-      <div className={`flex flex-col md:flex-row items-stretch gap-8 md:gap-14 ${isLeft ? '' : 'md:flex-row-reverse'}`}>
-        {/* Experience Image Box */}
-        <div className="flex-1 max-h-[220px] md:max-h-none overflow-hidden rounded-2xl md:rounded-3xl shadow-2xl">
-          <div className="relative group aspect-[16/10] md:aspect-auto h-full border border-white/5 bg-black">
-            <img 
-              src={exp.image} 
-              alt={exp.company}
-              className="absolute inset-0 w-full h-full object-contain object-center transition-all duration-700 will-change-transform"
-            />
-            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent p-6 flex flex-col justify-end">
-              <div className="flex items-center gap-2 text-cosmic-cyan font-orbitron text-[10px] font-bold tracking-widest mb-2">
-                <MapPin size={12} />
-                <span>{exp.location}</span>
-              </div>
-              <h4 className="text-white text-xl font-bold font-orbitron capitalize">{exp.eventName}</h4>
-            </div>
-          </div>
-        </div>
-
-        {/* Experience Details */}
-        <div className="flex-1 flex flex-col justify-center">
-          <div className={`flex flex-col ${isLeft ? 'items-start' : 'md:items-end'} text-left`}>
-            <span className="text-xs font-orbitron font-bold text-cosmic-cyan mb-2">{exp.duration}</span>
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-orbitron font-bold text-foreground mb-1 leading-tight">{exp.role}</h3>
-            <div className="flex items-center gap-2 text-lg font-bold text-muted-foreground mb-6 italic">
-              <Building2 size={18} />
-              <span>{exp.company}</span>
-            </div>
-            
-            <p className={`text-muted-foreground text-sm md:text-base mb-8 max-w-lg ${isLeft ? '' : 'md:text-right'}`}>
-              {exp.mainDescription}
-            </p>
-
-            {/* Projects Section - Listing 1, 2, 3 as requested */}
-            <div className={`w-full max-w-md ${isLeft ? '' : 'md:ml-auto'}`}>
-              <p className={`text-[10px] font-bold font-orbitron text-foreground/30 uppercase tracking-[0.2em] mb-4 ${isLeft ? '' : 'md:text-right'}`}>
-                Projects Done There
-              </p>
-              
-              <div className="space-y-3">
-                {exp.projects.map((project, pIdx) => (
-                  <div key={project.id} className="relative">
-                    <button
-                      onClick={() => setActiveProjectId(activeProjectId === project.id ? null : project.id)}
-                      className={`w-full flex items-center justify-between p-4 rounded-xl transition-all duration-300 border ${
-                        activeProjectId === project.id 
-                          ? 'bg-cosmic-cyan/10 border-cosmic-cyan shadow-[0_0_20px_rgba(94,234,212,0.1)]' 
-                          : 'social-bar-bg hover:border-cosmic-cyan/30'
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className="font-orbitron text-xs font-bold text-cosmic-cyan">{pIdx + 1}.</span>
-                        <span className="font-orbitron text-sm font-bold text-foreground uppercase tracking-wider">{project.name}</span>
-                      </div>
-                      {activeProjectId === project.id ? <ChevronUp size={16} className="text-cosmic-cyan" /> : <ChevronDown size={16} className="text-muted-foreground" />}
-                    </button>
-
-                    <AnimatePresence>
-                      {activeProjectId === project.id && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden"
-                        >
-                          <div className="p-5 social-bar-bg border-x border-b border-light/5 rounded-b-xl -mt-2 relative">
-                            <p className="text-xs md:text-sm text-muted-foreground mb-4 leading-relaxed italic" style={{ fontFamily: '"Times New Roman", Times, serif' }}>
-                              {project.description}
-                            </p>
-                            <motion.a
-                              href={project.liveUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cosmic-cyan text-slate-900 font-orbitron font-bold text-[10px] hover:scale-105 transition-all shadow-lg"
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <Globe size={14} />
-                              <span>LIVE PROJECT</span>
-                            </motion.a>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Central Timeline Accent (Desktop only) */}
-      <div className="hidden md:block absolute left-1/2 top-0 h-full w-px social-bar-bg -translate-x-1/2" />
-      <div className="hidden md:block absolute left-1/2 top-4 -translate-x-1/2 z-10">
-        <div 
-          className="w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md" 
-          style={{ 
-            backgroundColor: `${exp.color}15`, 
-            border: `2px solid ${exp.color}50`,
-            boxShadow: `0 0 20px ${exp.color}30` 
-          }}
-        >
-          <Briefcase size={20} style={{ color: exp.color }} />
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
 export const ExperienceSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [activeProjectId, setActiveProjectId] = useState<number | null>(null);
+  
+  // 3D Parallax Tilt state
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const activeExp = experiences[currentIndex];
+
+  // Auto-expand first project if active experience changes
+  useEffect(() => {
+    if (activeExp && activeExp.projects.length > 0) {
+      setActiveProjectId(activeExp.projects[0].id);
+    } else {
+      setActiveProjectId(null);
+    }
+  }, [currentIndex]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: x * 10, y: y * -10 }); // Subtle tilt
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+  };
 
   return (
-    <section id="experience" className="section-container relative overflow-hidden flex flex-col items-center justify-center py-10 md:py-20 translate-z-0" ref={ref}>
-      <div className="max-w-6xl mx-auto w-full relative z-10 flex flex-col items-center">
+    <section 
+      id="experience" 
+      className="section-container relative overflow-hidden flex flex-col items-center justify-center py-16 md:py-28 translate-z-0" 
+      ref={ref}
+    >
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center">
         {/* Section Header */}
         <motion.div
-          className="text-center mb-10 md:mb-24"
-          initial={{ opacity: 0, y: 30 }}
+          className="text-center mb-12 md:mb-20"
+          initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
           <h2 className="font-orbitron text-xl sm:text-2xl md:text-3xl font-bold mb-2 text-cosmic-cyan tracking-normal">
             Experience
           </h2>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-xs md:text-sm">
             Proven track record in high-impact technical environments
           </p>
         </motion.div>
 
-        {/* Experience List */}
-        <div className="w-full relative">
-          {experiences.map((exp, index) => (
-            <ExperienceCard key={exp.id} exp={exp} index={index} isInView={isInView} />
-          ))}
+        {/* Experience Selector Tabs (Renders only if multiple items) */}
+        {experiences.length > 1 && (
+          <div className="flex justify-center items-center flex-wrap gap-4 mb-12 w-full max-w-lg">
+            {experiences.map((exp, idx) => (
+              <button
+                key={exp.id}
+                onClick={() => setCurrentIndex(idx)}
+                className="relative px-6 py-2.5 rounded-full font-orbitron font-bold text-xs transition-all duration-300"
+              >
+                {currentIndex === idx && (
+                  <motion.div
+                    layoutId="activeExperienceTab"
+                    className="absolute inset-0 rounded-full bg-cosmic-cyan/10 border border-cosmic-cyan/30 shadow-[0_0_15px_rgba(94,234,212,0.15)]"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className={`relative z-10 ${currentIndex === idx ? 'text-cosmic-cyan' : 'text-muted-foreground hover:text-foreground'}`}>
+                  {exp.company}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Active Experience Showcase */}
+        <div className="w-full relative min-h-fit">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, scale: 0.99, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.99, y: -15 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center w-full"
+            >
+              {/* Left Column: Immersive 3D Workstation Preview */}
+              <div className="lg:col-span-5 w-full flex justify-center">
+                <div 
+                  className="w-full max-w-sm sm:max-w-md lg:max-w-none aspect-[3/4] relative group perspective-1000 preserve-3d"
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  style={{
+                    transform: `perspective(1000px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
+                    transition: 'transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1)'
+                  }}
+                >
+                  {/* Glowing Backdrop Sync with Brand Color */}
+                  <div 
+                    className="absolute inset-0 rounded-3xl opacity-30 blur-2xl transition-all duration-500 group-hover:scale-105"
+                    style={{ 
+                      backgroundColor: activeExp.color,
+                      filter: 'blur(32px)'
+                    }} 
+                  />
+
+                  {/* Glass Frame Wrapper */}
+                  <div 
+                    className="w-full h-full relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500"
+                  >
+                    <img 
+                      src={activeExp.image} 
+                      alt={activeExp.company}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.02]"
+                    />
+
+                    {/* Meta Glass Label */}
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-5 flex flex-col justify-end">
+                      <div className="flex items-center gap-1.5 text-cosmic-cyan font-orbitron text-[9px] font-bold tracking-widest mb-1">
+                        <MapPin size={10} style={{ color: activeExp.color }} />
+                        <span style={{ color: activeExp.color }}>{activeExp.location}</span>
+                      </div>
+                      <h4 className="text-white/90 text-sm font-semibold font-orbitron capitalize tracking-wide">
+                        {activeExp.eventName}
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Experience Details */}
+              <div className="lg:col-span-7 flex flex-col h-full justify-center">
+                {/* Duration Badge */}
+                <div className="flex items-center gap-2 mb-3">
+                  <span 
+                    className="px-3 py-1 rounded-full text-[10px] font-bold font-orbitron tracking-widest uppercase"
+                    style={{ 
+                      borderColor: `${activeExp.color}30`, 
+                      color: activeExp.color, 
+                      backgroundColor: `${activeExp.color}08`,
+                      borderWidth: '1px'
+                    }}
+                  >
+                    {activeExp.duration}
+                  </span>
+                </div>
+
+                {/* Role and Company */}
+                <h3 
+                  className="text-2xl sm:text-3xl md:text-5xl font-light mb-3 leading-none tracking-tighter text-foreground"
+                  style={{ fontFamily: '"Times New Roman", Times, serif' }}
+                >
+                  {activeExp.role}
+                </h3>
+                
+                <div className="flex items-center gap-2 text-md font-bold text-muted-foreground/80 mb-6 italic">
+                  <Building2 size={16} />
+                  <span>{activeExp.company}</span>
+                </div>
+
+                {/* Core Description */}
+                <p 
+                  className="text-xs md:text-base leading-relaxed text-muted-foreground font-serif italic max-w-2xl mb-8"
+                  style={{ fontFamily: '"Times New Roman", Times, serif' }}
+                >
+                  "{activeExp.mainDescription}"
+                </p>
+
+                {/* Collapsible Projects Block */}
+                <div className="w-full mb-8">
+                  <p className="text-[9px] font-bold font-orbitron text-foreground/30 uppercase tracking-[0.2em] mb-3">
+                    Projects Done
+                  </p>
+                  
+                  <div className="space-y-3">
+                    {activeExp.projects.map((project, pIdx) => {
+                      const isOpen = activeProjectId === project.id;
+                      return (
+                        <div 
+                          key={project.id} 
+                          className="relative rounded-2xl overflow-hidden border transition-all duration-300"
+                          style={{ 
+                            borderColor: isOpen ? `${activeExp.color}40` : 'rgba(255, 255, 255, 0.05)',
+                            backgroundColor: isOpen ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
+                          }}
+                        >
+                          <button
+                            onClick={() => setActiveProjectId(isOpen ? null : project.id)}
+                            className="w-full flex items-center justify-between p-4 transition-all duration-300"
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="font-orbitron text-[10px] font-bold opacity-40">
+                                {(pIdx + 1).toString().padStart(2, '0')}
+                              </span>
+                              <span className="font-orbitron text-xs md:text-sm font-bold text-foreground/90 uppercase tracking-wider">
+                                {project.name}
+                              </span>
+                            </div>
+                            {isOpen ? (
+                              <ChevronUp size={14} style={{ color: activeExp.color }} />
+                            ) : (
+                              <ChevronDown size={14} className="text-muted-foreground" />
+                            )}
+                          </button>
+
+                          <AnimatePresence initial={false}>
+                            {isOpen && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                              >
+                                <div className="px-4 pb-5 pt-1 border-t border-white/5">
+                                  <p 
+                                    className="text-xs md:text-sm text-muted-foreground/90 mb-4 leading-relaxed font-serif italic"
+                                    style={{ fontFamily: '"Times New Roman", Times, serif' }}
+                                  >
+                                    {project.description}
+                                  </p>
+                                  
+                                  <motion.a
+                                    href={project.liveUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-orbitron font-bold text-[9px] text-white hover:scale-105 transition-all shadow-lg"
+                                    style={{ 
+                                      backgroundColor: activeExp.color,
+                                      boxShadow: `0 8px 20px -6px ${activeExp.color}80`
+                                    }}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                  >
+                                    <Globe size={11} />
+                                    <span>LIVE PROJECT</span>
+                                  </motion.a>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Skills Cloud */}
+                <div>
+                  <p className="text-[9px] font-bold font-orbitron text-foreground/30 uppercase tracking-[0.2em] mb-3">
+                    Technologies Mastered
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {activeExp.skills.map((skill) => (
+                      <span 
+                        key={skill} 
+                        className="px-3.5 py-1 rounded-full text-[10px] font-mono font-bold tracking-wide border transition-all duration-300 hover:scale-105"
+                        style={{ 
+                          borderColor: `${activeExp.color}20`, 
+                          color: activeExp.color, 
+                          backgroundColor: `${activeExp.color}08`,
+                          boxShadow: `0 0 10px ${activeExp.color}05`
+                        }}
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </section>

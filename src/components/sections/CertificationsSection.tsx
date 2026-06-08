@@ -29,10 +29,10 @@ const orgs: Organization[] = [
     certs: [
       {
         id: 101,
-        name: 'Azure AI Associate',
-        image: '/project-image3.jpg',
-        description: 'Specialization in designing and implementing Microsoft Azure AI solutions through cognitive services and machine learning.',
-        date: 'Dec 2023',
+        name: 'Azure AI Engineer Associate',
+        image: '/certification/23ADR038 Azure AI Engineer Association_page-0001.jpg',
+        description: 'Specialization in designing and implementing Microsoft Azure AI solutions, managing cognitive services, and deploying machine learning models.',
+        date: 'April 2025',
       }
     ]
   },
@@ -41,42 +41,48 @@ const orgs: Organization[] = [
     name: 'Oracle',
     logoUrl: 'https://www.vectorlogo.zone/logos/oracle/oracle-ar21.svg',
     accentColor: '#F80000',
-    invert: true,
     certs: [
       {
         id: 201,
-        name: 'Database Professional I',
-        image: '/project-image5.jpg',
-        description: 'Core expertise in Oracle database management and SQL optimization for enterprise environments.',
-        date: 'Oct 2023',
+        name: 'Java SE 17 Developer',
+        image: '/certification/23ADR038 Java SE 17 Developer_page-0001.jpg',
+        description: 'Core developer certification validating proficiency in Java SE 17 programming, OOP principles, syntax, APIs, and modern platform features.',
+        date: 'February 2026',
       },
       {
         id: 202,
-        name: 'Java SE 17 Developer',
-        image: '/project-image4.jpg',
-        description: 'Certified professional for core Java development, focusing on performance and modern language features.',
-        date: 'Nov 2023',
+        name: 'OCI Data Science Professional',
+        image: '/certification/Oracel Data Science_page-0001.jpg',
+        description: 'Professional certification demonstrating capability in building, training, deploying, and managing machine learning models on Oracle Cloud Infrastructure.',
+        date: 'October 2025',
       },
       {
         id: 203,
-        name: 'Cloud Infrastructure',
-        image: '/project-image2.jpg',
-        description: 'Architecting secure and scalable cloud solutions using Oracle Cloud Infrastructure (OCI) services.',
-        date: 'Jan 2024',
+        name: 'OCI AI Foundations Associate',
+        image: '/certification/Oracle AI Foundations_page-0001.jpg',
+        description: 'Foundational certification covering machine learning, deep learning, NLP, computer vision, and Oracle Cloud Infrastructure AI services.',
+        date: 'October 2025',
       },
       {
         id: 204,
-        name: 'SQL Tuning Expert',
-        image: '/project-image1.jpg',
-        description: 'Deep-dive mastery of query execution plans and database performance optimization techniques.',
-        date: 'Feb 2024',
+        name: 'Oracle AI Vector Search',
+        image: '/certification/Oracle AI Vector_page-0001.jpg',
+        description: 'Specialized certification covering semantic search, vector indexing, neural network integrations, and advanced SQL vector querying in Oracle 23c.',
+        date: 'October 2025',
       },
       {
         id: 205,
-        name: 'Oracle Certified Master',
-        image: '/project-image3.jpg',
-        description: 'The highest tier of database accreditation, demonstrating mastery over complex system configurations and recovery.',
-        date: 'Mar 2024',
+        name: 'Oracle APEX Cloud Developer',
+        image: '/certification/Oracle APEX_page-0001.jpg',
+        description: 'Expertise in building scalable, secure, and low-code enterprise applications using Oracle Application Express (APEX) on Oracle Cloud.',
+        date: 'May 2025',
+      },
+      {
+        id: 206,
+        name: 'OCI Generative AI Professional',
+        image: '/certification/Oracle Gen AI_page-0001.jpg',
+        description: 'Professional validation of proficiency in OCI Generative AI services, covering LLM architectures, fine-tuning, prompt engineering, and RAG.',
+        date: 'October 2025',
       }
     ]
   },
@@ -88,10 +94,10 @@ const orgs: Organization[] = [
     certs: [
       {
         id: 301,
-        name: 'Developer Associate',
-        image: '/project-image2.jpg',
-        description: 'Building resilient, high-performance applications using MongoDB Atlas and advanced NoSQL modeling.',
-        date: 'Aug 2023',
+        name: 'MongoDB Associate Developer',
+        image: '/certification/23ADR038 MongoDB Associate Developer_page-0001.jpg',
+        description: 'Certification validating skills in designing, building, and deploying scalable document database solutions with MongoDB Atlas.',
+        date: 'May 2025',
       }
     ]
   },
@@ -100,21 +106,20 @@ const orgs: Organization[] = [
     name: 'NVIDIA',
     logoUrl: 'https://www.vectorlogo.zone/logos/nvidia/nvidia-ar21.svg',
     accentColor: '#76B900',
-    invert: true,
     certs: [
       {
         id: 401,
-        name: 'Deep Learning Fund.',
-        image: '/project-image1.jpg',
-        description: 'Hands-on training in GPU-accelerated neural network design and NVIDIA hardware optimization.',
-        date: 'Jan 2024',
+        name: 'Generative AI with Diffusion Models',
+        image: '/certification/NVIDIA Gen AI_page-0001.jpg',
+        description: 'Certification covering core concepts of generative AI, large language models, prompt engineering, and hardware-accelerated transformer architectures.',
+        date: 'October 2025',
       },
       {
         id: 402,
-        name: 'Accelerated Computing',
-        image: '/project-image5.jpg',
-        description: 'Mastery of CUDA programming and high-performance computing (HPC) for modern AI research.',
-        date: 'Mar 2024',
+        name: 'NVIDIA PyTorch (Getting Started with AI)',
+        image: '/certification/NVIDIA Pytorch_page-0001.jpg',
+        description: 'Validation of hands-on skills in deep learning modeling, dataset pipelines, GPU acceleration, and inference optimization using PyTorch on NVIDIA hardware.',
+        date: 'October 2025',
       }
     ]
   },
@@ -127,7 +132,7 @@ export const CertificationsSection = () => {
   const [currentCertIndex, setCurrentCertIndex] = useState(0);
 
   const activeOrg = orgs[currentOrgIndex];
-  const activeCert = activeOrg.certs[currentCertIndex];
+  const activeCert = activeOrg.certs[currentCertIndex] || activeOrg.certs[0];
 
   // Reset certificate index when switching organization
   useEffect(() => {
@@ -172,13 +177,24 @@ export const CertificationsSection = () => {
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: idx * 0.1 }}
             >
-              <img
-                src={org.logoUrl}
-                alt={org.name}
-                className={`h-full w-full object-contain transition-all duration-500 filter ${
-                  currentOrgIndex === idx ? 'grayscale-0 scale-110' : 'grayscale opacity-20 hover:grayscale-0 hover:opacity-100'
-                } ${org.invert ? 'invert-on-dark' : ''}`}
-              />
+              {org.name === 'NVIDIA' ? (
+                <div className={`h-full w-full flex items-center justify-center transition-all duration-500 ${
+                  currentOrgIndex === idx ? 'opacity-100 scale-110' : 'opacity-40 hover:opacity-80 scale-100'
+                }`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60" className="h-full w-full object-contain text-foreground">
+                    <path d="M52.412 38.843v16.863h4.76V38.843zm-37.44-.03v16.877h4.802V42.587l3.744.014c1.23 0 2.086.3 2.672.93.757.8 1.057 2.1 1.057 4.46v7.703h4.66v-9.317c0-6.66-4.244-7.56-8.388-7.56zm45.115.03v16.863h7.717c4.116 0 5.46-.686 6.902-2.215 1.03-1.072 1.686-3.444 1.686-6.03 0-2.372-.557-4.487-1.543-5.802-1.743-2.358-4.287-2.815-8.088-2.815zm4.716 3.658h2.044c2.972 0 4.887 1.33 4.887 4.787s-1.915 4.802-4.887 4.802h-2.044zm-19.25-3.658l-3.973 13.36-3.8-13.36h-5.145l5.43 16.863h6.86l5.487-16.863zM78.62 55.706h4.76V38.843h-4.76zm13.347-16.863l-6.645 16.848H90l1.057-2.987h7.86l1 2.972h5.102l-6.702-16.834zm3.087 3.072l2.887 7.888h-5.86" fill="currentColor"/>
+                    <path d="M53.922 13.005v-2.85l.844-.035c7.81-.246 12.93 6.72 12.93 6.72s-5.524 7.67-11.453 7.67c-.792 0-1.566-.123-2.305-.37v-8.656c3.044.37 3.66 1.707 5.47 4.75l4.064-3.413s-2.973-3.888-7.97-3.888c-.528-.018-1.056.018-1.583.07m0-9.43v4.258l.844-.053C65.62 7.4 72.71 16.682 72.71 16.682s-8.128 9.887-16.6 9.887c-.74 0-1.46-.07-2.182-.194v2.64c.598.07 1.214.123 1.812.123 7.882 0 13.582-4.03 19.106-8.78.915.74 4.662 2.516 5.436 3.3-5.243 4.398-17.47 7.934-24.402 7.934a17.36 17.36 0 0 1-1.935-.106V35.2H83.9V3.575zm0 20.566v2.252c-7.284-1.302-9.307-8.884-9.307-8.884s3.5-3.87 9.307-4.504v2.463h-.018c-3.044-.37-5.436 2.48-5.436 2.48s1.355 4.803 5.454 6.193m-12.93-6.95s4.3-6.37 12.948-7.037V7.833C44.37 8.607 36.1 16.7 36.1 16.7s4.68 13.547 17.822 14.778v-2.463c-9.64-1.196-12.93-11.823-12.93-11.823" fill="#76b900"/>
+                  </svg>
+                </div>
+              ) : (
+                <img
+                  src={org.logoUrl}
+                  alt={org.name}
+                  className={`h-full w-full object-contain transition-all duration-500 ${
+                    currentOrgIndex === idx ? 'opacity-100 scale-110' : 'opacity-40 hover:opacity-80 scale-100'
+                  }`}
+                />
+              )}
               <div className="absolute -bottom-4 md:bottom-[-20px] left-0 right-0 flex justify-center">
                 <AnimatePresence>
                   {currentOrgIndex === idx && (
@@ -209,25 +225,16 @@ export const CertificationsSection = () => {
               className="relative w-full"
             >
               <div 
-                className="glass-card flex flex-col md:flex-row gap-6 md:gap-10 p-5 sm:p-6 md:p-10 h-full border-l-4 shadow-xl relative backdrop-blur-md" 
-                style={{ borderLeftColor: activeOrg.accentColor }}
+                className="flex flex-col md:flex-row gap-6 md:gap-10 p-5 sm:p-6 md:p-10 h-full relative" 
               >
                 {/* Image Box */}
-                <div className="flex-1 w-full min-h-[140px] md:h-full md:min-h-0 relative group">
-                  <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-xl bg-black/40 border border-white/5">
+                <div className="flex-1 w-full h-[250px] sm:h-[300px] md:h-[380px] lg:h-[420px] relative group">
+                  <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-2xl bg-black/40 border border-white/5 backdrop-blur-sm">
                     <img
                       src={activeCert.image} 
                       alt={activeCert.name}
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                      className="absolute inset-0 w-full h-full object-contain p-4 transition-transform duration-1000 group-hover:scale-[1.02]"
                     />
-                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
-                      <p className="text-foreground/40 text-[8px] font-orbitron font-bold uppercase tracking-[0.2em] mb-0.5">
-                        Professional ID
-                      </p>
-                      <p className="text-foreground text-[10px] font-mono font-bold tracking-widest uppercase">
-                        {activeOrg.name.substring(0, 3)}-CERT-{(activeCert.id + currentCertIndex) * 102}Z
-                      </p>
-                    </div>
                   </div>
                 </div>
 
@@ -265,7 +272,14 @@ export const CertificationsSection = () => {
                     
                     <div className="flex items-center gap-3 mb-6 opacity-80">
                       <div className="w-6 h-6 flex items-center justify-center social-bar-bg rounded-lg p-1">
-                        <img src={activeOrg.logoUrl} alt="" className={`w-full h-full object-contain ${activeOrg.invert ? 'invert-on-dark' : ''}`} />
+                        {activeOrg.name === 'NVIDIA' ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60" className="w-full h-full object-contain text-foreground">
+                            <path d="M52.412 38.843v16.863h4.76V38.843zm-37.44-.03v16.877h4.802V42.587l3.744.014c1.23 0 2.086.3 2.672.93.757.8 1.057 2.1 1.057 4.46v7.703h4.66v-9.317c0-6.66-4.244-7.56-8.388-7.56zm45.115.03v16.863h7.717c4.116 0 5.46-.686 6.902-2.215 1.03-1.072 1.686-3.444 1.686-6.03 0-2.372-.557-4.487-1.543-5.802-1.743-2.358-4.287-2.815-8.088-2.815zm4.716 3.658h2.044c2.972 0 4.887 1.33 4.887 4.787s-1.915 4.802-4.887 4.802h-2.044zm-19.25-3.658l-3.973 13.36-3.8-13.36h-5.145l5.43 16.863h6.86l5.487-16.863zM78.62 55.706h4.76V38.843h-4.76zm13.347-16.863l-6.645 16.848H90l1.057-2.987h7.86l1 2.972h5.102l-6.702-16.834zm3.087 3.072l2.887 7.888h-5.86" fill="currentColor"/>
+                            <path d="M53.922 13.005v-2.85l.844-.035c7.81-.246 12.93 6.72 12.93 6.72s-5.524 7.67-11.453 7.67c-.792 0-1.566-.123-2.305-.37v-8.656c3.044.37 3.66 1.707 5.47 4.75l4.064-3.413s-2.973-3.888-7.97-3.888c-.528-.018-1.056.018-1.583.07m0-9.43v4.258l.844-.053C65.62 7.4 72.71 16.682 72.71 16.682s-8.128 9.887-16.6 9.887c-.74 0-1.46-.07-2.182-.194v2.64c.598.07 1.214.123 1.812.123 7.882 0 13.582-4.03 19.106-8.78.915.74 4.662 2.516 5.436 3.3-5.243 4.398-17.47 7.934-24.402 7.934a17.36 17.36 0 0 1-1.935-.106V35.2H83.9V3.575zm0 20.566v2.252c-7.284-1.302-9.307-8.884-9.307-8.884s3.5-3.87 9.307-4.504v2.463h-.018c-3.044-.37-5.436 2.48-5.436 2.48s1.355 4.803 5.454 6.193m-12.93-6.95s4.3-6.37 12.948-7.037V7.833C44.37 8.607 36.1 16.7 36.1 16.7s4.68 13.547 17.822 14.778v-2.463c-9.64-1.196-12.93-11.823-12.93-11.823" fill="#76b900"/>
+                          </svg>
+                        ) : (
+                          <img src={activeOrg.logoUrl} alt="" className="w-full h-full object-contain" />
+                        )}
                       </div>
                       <span className="text-sm font-bold text-muted-foreground capitalize">{activeOrg.name} Certificate</span>
                     </div>
@@ -280,21 +294,6 @@ export const CertificationsSection = () => {
                       <p className="text-foreground/20 text-[8px] font-bold uppercase tracking-[0.2em] mb-0.5">ISSUE DATE</p>
                       <p className="text-lg font-bold font-orbitron" style={{ color: activeOrg.accentColor }}>{activeCert.date}</p>
                     </div>
-                    {/* VERIFY CREDENTIAL - Updated to constant brand color */}
-                    <motion.a
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-8 py-3 rounded-full font-orbitron font-bold text-[10px] md:text-xs text-white transition-all duration-300 shadow-lg flex items-center gap-2 group"
-                      style={{ 
-                        backgroundColor: activeOrg.accentColor,
-                        boxShadow: `0 10px 30px -10px ${activeOrg.accentColor}80` 
-                      }}
-                      whileHover={{ scale: 1.05, filter: 'brightness(1.1)' }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <span>VERIFY CREDENTIAL</span>
-                    </motion.a>
                   </div>
                 </div>
               </div>

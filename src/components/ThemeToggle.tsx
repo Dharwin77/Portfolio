@@ -14,6 +14,31 @@ export const ThemeToggle = ({ className = "" }: ThemeToggleProps) => {
     return 'dark';
   });
 
+  useEffect(() => {
+    const syncThemeClass = (currentTheme: 'dark' | 'light') => {
+      if (currentTheme === 'light') {
+        document.documentElement.classList.add('light');
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+        document.documentElement.classList.remove('light');
+      }
+    };
+
+    // Initial sync on mount
+    syncThemeClass(theme);
+
+    const handleThemeChange = () => {
+      const currentTheme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
+      setTheme(currentTheme);
+    };
+
+    window.addEventListener('theme-changed', handleThemeChange);
+    return () => {
+      window.removeEventListener('theme-changed', handleThemeChange);
+    };
+  }, [theme]);
+
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(nextTheme);
@@ -24,6 +49,7 @@ export const ThemeToggle = ({ className = "" }: ThemeToggleProps) => {
       document.documentElement.classList.add('dark');
       document.documentElement.classList.remove('light');
     }
+    window.dispatchEvent(new Event('theme-changed'));
   };
 
   return (

@@ -1,11 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import '@fontsource/orbitron/400.css';
 @import '@fontsource/orbitron/500.css';
 @import '@fontsource/orbitron/700.css';
 @import '@fontsource/orbitron/900.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   :root {
@@ -356,11 +356,25 @@
     filter: invert(1) brightness(2);
   }
 
+  .dark-glow {
+    filter: none;
+  }
+  .dark .dark-glow {
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.45));
+  }
+
   .social-bar-bg {
     @apply bg-background/5 border-white/10;
   }
   .light .social-bar-bg {
     @apply bg-black/5 border-black/10;
+  }
+
+  .social-btn-bg {
+    @apply bg-white/5 border border-white/10;
+  }
+  .light .social-btn-bg {
+    @apply bg-black/5 border border-black/15;
   }
 }
 
@@ -478,4 +492,40 @@
     transform: scale(1);
     box-shadow: 0 0 0 rgba(94, 234, 212, 0);
   }
+}
+
+/* 3D Perspective and Laser Scan Styles for Certifications Section */
+.perspective-1000 {
+  perspective: 1000px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+@keyframes laser-scan {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.laser-scanner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 10%, currentColor 50%, transparent 90%);
+  animation: laser-scan 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+  z-index: 20;
 }

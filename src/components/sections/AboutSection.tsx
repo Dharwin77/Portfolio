@@ -10,7 +10,7 @@ const stats = [
 ];
 
 // Configuration: Add your profile photo
-const PROFILE_PHOTO_URL = '/profile.jpg';
+const PROFILE_PHOTO_URL = '/profile1.jpg';
 
 // Configuration: Profile card details
 const PROFILE_CONFIG = {

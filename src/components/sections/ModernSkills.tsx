@@ -7,6 +7,7 @@ interface Skill {
   icon: string;
   color: string;
   invert?: boolean;
+  glow?: boolean;
 }
 
 const SKILLS_DATA: Record<string, Skill[]> = {
@@ -113,12 +114,14 @@ const SKILLS_DATA: Record<string, Skill[]> = {
     {
       name: 'NumPy',
       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/numpy/numpy-original.svg',
-      color: '#013243'
+      color: '#013243',
+      glow: true
     },
     {
       name: 'Pandas',
       icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pandas/pandas-original.svg',
-      color: '#150458'
+      color: '#150458',
+      glow: true
     },
     {
       name: 'OpenCV',
@@ -206,7 +209,7 @@ const ModernSkills = () => {
                 <img
                   src={skill.icon}
                   alt={skill.name}
-                  className={`w-5 h-5 object-contain ${skill.invert ? 'invert-on-dark' : ''}`}
+                  className={`w-5 h-5 object-contain ${skill.invert ? 'invert-on-dark' : ''} ${skill.glow ? 'dark-glow' : ''}`}
                 />
                 <span className="font-orbitron text-xs font-medium whitespace-nowrap">
                   {skill.name}
@@ -261,7 +264,7 @@ const ModernSkills = () => {
                         <img
                           src={skill.icon}
                           alt={skill.name}
-                          className={`w-full h-full object-contain transition-transform duration-300 group-hover/card:scale-110 ${skill.invert ? 'invert-on-dark' : ''}`}
+                          className={`w-full h-full object-contain transition-transform duration-300 group-hover/card:scale-110 ${skill.invert ? 'invert-on-dark' : ''} ${skill.glow ? 'dark-glow' : ''}`}
                         />
                       </div>
 

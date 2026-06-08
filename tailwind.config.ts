@@ -24,6 +24,7 @@ export default {
       fontFamily: {
         orbitron: ['Orbitron', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        'space-grotesk': ['"Space Grotesk"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
