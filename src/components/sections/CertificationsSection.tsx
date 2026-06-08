@@ -134,6 +134,35 @@ export const CertificationsSection = () => {
   const activeOrg = orgs[currentOrgIndex];
   const activeCert = activeOrg.certs[currentCertIndex] || activeOrg.certs[0];
 
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('light') ? 'light' : 'dark';
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const currentTheme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
+      setTheme(currentTheme);
+    };
+    window.addEventListener('theme-changed', handleThemeChange);
+    return () => window.removeEventListener('theme-changed', handleThemeChange);
+  }, []);
+
+  const getLightModeColor = (color: string) => {
+    if (color.startsWith('#')) {
+      let r = parseInt(color.substring(1, 3), 16);
+      let g = parseInt(color.substring(3, 5), 16);
+      let b = parseInt(color.substring(5, 7), 16);
+      r = Math.floor(r * 0.55);
+      g = Math.floor(g * 0.55);
+      b = Math.floor(b * 0.55);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+    return color;
+  };
+
   // Reset certificate index when switching organization
   useEffect(() => {
     setCurrentCertIndex(0);
@@ -204,7 +233,10 @@ export const CertificationsSection = () => {
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: 1 }}
                       exit={{ scaleX: 0 }}
-                      style={{ backgroundColor: activeOrg.accentColor, color: activeOrg.accentColor }}
+                      style={{ 
+                        backgroundColor: theme === 'light' ? getLightModeColor(activeOrg.accentColor) : activeOrg.accentColor, 
+                        color: theme === 'light' ? getLightModeColor(activeOrg.accentColor) : activeOrg.accentColor 
+                      }}
                     />
                   )}
                 </AnimatePresence>
@@ -229,7 +261,7 @@ export const CertificationsSection = () => {
               >
                 {/* Image Box */}
                 <div className="flex-1 w-full h-[250px] sm:h-[300px] md:h-[380px] lg:h-[420px] relative group">
-                  <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-2xl bg-black/40 border border-white/5 backdrop-blur-sm">
+                  <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-2xl bg-black/5 dark:bg-black/40 border border-border/30 backdrop-blur-sm">
                     <img
                       src={activeCert.image} 
                       alt={activeCert.name}
@@ -243,7 +275,7 @@ export const CertificationsSection = () => {
                   <div>
                     <div className="flex justify-between items-center mb-4">
                       {/* Counter - X / Y as requested */}
-                      <span className="text-[10px] font-bold font-orbitron tracking-[0.2em] uppercase px-2.5 py-1 social-bar-bg rounded-lg" style={{ color: activeOrg.accentColor }}>
+                      <span className="text-[10px] font-bold font-orbitron tracking-[0.2em] uppercase px-2.5 py-1 social-bar-bg rounded-lg" style={{ color: theme === 'light' ? getLightModeColor(activeOrg.accentColor) : activeOrg.accentColor }}>
                         {currentCertIndex + 1} / {activeOrg.certs.length}
                       </span>
                       
@@ -251,13 +283,13 @@ export const CertificationsSection = () => {
                       {activeOrg.certs.length > 1 && (
                         <div className="flex gap-2">
                           <button 
-                            className="w-8 h-8 rounded-full social-bar-bg flex items-center justify-center text-foreground/50 hover:text-foreground transition-all active:scale-95"
+                            className="w-8 h-8 rounded-full social-bar-bg flex items-center justify-center text-foreground/50 hover:text-foreground transition-all active:scale-95 border border-border/10"
                             onClick={handlePrev} 
                           >
                             <ChevronLeft size={16} />
                           </button>
                           <button 
-                            className="w-8 h-8 rounded-full social-bar-bg flex items-center justify-center text-foreground/50 hover:text-foreground transition-all active:scale-95"
+                            className="w-8 h-8 rounded-full social-bar-bg flex items-center justify-center text-foreground/50 hover:text-foreground transition-all active:scale-95 border border-border/10"
                             onClick={handleNext} 
                           >
                             <ChevronRight size={16} />
@@ -271,7 +303,7 @@ export const CertificationsSection = () => {
                     </h3>
                     
                     <div className="flex items-center gap-3 mb-6 opacity-80">
-                      <div className="w-6 h-6 flex items-center justify-center social-bar-bg rounded-lg p-1">
+                      <div className="w-6 h-6 flex items-center justify-center social-bar-bg rounded-lg p-1 border border-border/10">
                         {activeOrg.name === 'NVIDIA' ? (
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60" className="w-full h-full object-contain text-foreground">
                             <path d="M52.412 38.843v16.863h4.76V38.843zm-37.44-.03v16.877h4.802V42.587l3.744.014c1.23 0 2.086.3 2.672.93.757.8 1.057 2.1 1.057 4.46v7.703h4.66v-9.317c0-6.66-4.244-7.56-8.388-7.56zm45.115.03v16.863h7.717c4.116 0 5.46-.686 6.902-2.215 1.03-1.072 1.686-3.444 1.686-6.03 0-2.372-.557-4.487-1.543-5.802-1.743-2.358-4.287-2.815-8.088-2.815zm4.716 3.658h2.044c2.972 0 4.887 1.33 4.887 4.787s-1.915 4.802-4.887 4.802h-2.044zm-19.25-3.658l-3.973 13.36-3.8-13.36h-5.145l5.43 16.863h6.86l5.487-16.863zM78.62 55.706h4.76V38.843h-4.76zm13.347-16.863l-6.645 16.848H90l1.057-2.987h7.86l1 2.972h5.102l-6.702-16.834zm3.087 3.072l2.887 7.888h-5.86" fill="currentColor"/>
@@ -291,8 +323,8 @@ export const CertificationsSection = () => {
 
                   <div className="flex flex-wrap items-center gap-8">
                     <div>
-                      <p className="text-foreground/20 text-[8px] font-bold uppercase tracking-[0.2em] mb-0.5">ISSUE DATE</p>
-                      <p className="text-lg font-bold font-orbitron" style={{ color: activeOrg.accentColor }}>{activeCert.date}</p>
+                      <p className="text-muted-foreground/60 text-[8px] font-bold uppercase tracking-[0.2em] mb-0.5">ISSUE DATE</p>
+                      <p className="text-lg font-bold font-orbitron" style={{ color: theme === 'light' ? getLightModeColor(activeOrg.accentColor) : activeOrg.accentColor }}>{activeCert.date}</p>
                     </div>
                   </div>
                 </div>

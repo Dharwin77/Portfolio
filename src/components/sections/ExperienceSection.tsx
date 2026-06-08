@@ -58,6 +58,35 @@ export const ExperienceSection = () => {
 
   const activeExp = experiences[currentIndex];
 
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('light') ? 'light' : 'dark';
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const currentTheme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
+      setTheme(currentTheme);
+    };
+    window.addEventListener('theme-changed', handleThemeChange);
+    return () => window.removeEventListener('theme-changed', handleThemeChange);
+  }, []);
+
+  const getLightModeColor = (color: string) => {
+    if (color.startsWith('#')) {
+      let r = parseInt(color.substring(1, 3), 16);
+      let g = parseInt(color.substring(3, 5), 16);
+      let b = parseInt(color.substring(5, 7), 16);
+      r = Math.floor(r * 0.55);
+      g = Math.floor(g * 0.55);
+      b = Math.floor(b * 0.55);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+    return color;
+  };
+
   // Auto-expand first project if active experience changes
   useEffect(() => {
     if (activeExp && activeExp.projects.length > 0) {
@@ -168,8 +197,8 @@ export const ExperienceSection = () => {
                     {/* Meta Glass Label */}
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-5 flex flex-col justify-end">
                       <div className="flex items-center gap-1.5 text-cosmic-cyan font-orbitron text-[9px] font-bold tracking-widest mb-1">
-                        <MapPin size={10} style={{ color: activeExp.color }} />
-                        <span style={{ color: activeExp.color }}>{activeExp.location}</span>
+                        <MapPin size={10} style={{ color: theme === 'light' ? getLightModeColor(activeExp.color) : activeExp.color }} />
+                        <span style={{ color: theme === 'light' ? getLightModeColor(activeExp.color) : activeExp.color }}>{activeExp.location}</span>
                       </div>
                       <h4 className="text-white/90 text-sm font-semibold font-orbitron capitalize tracking-wide">
                         {activeExp.eventName}
@@ -186,9 +215,9 @@ export const ExperienceSection = () => {
                   <span 
                     className="px-3 py-1 rounded-full text-[10px] font-bold font-orbitron tracking-widest uppercase"
                     style={{ 
-                      borderColor: `${activeExp.color}30`, 
-                      color: activeExp.color, 
-                      backgroundColor: `${activeExp.color}08`,
+                      borderColor: theme === 'light' ? getLightModeColor(activeExp.color) : `${activeExp.color}30`, 
+                      color: theme === 'light' ? getLightModeColor(activeExp.color) : activeExp.color, 
+                      backgroundColor: theme === 'light' ? `${activeExp.color}15` : `${activeExp.color}08`,
                       borderWidth: '1px'
                     }}
                   >
@@ -231,7 +260,7 @@ export const ExperienceSection = () => {
                           key={project.id} 
                           className="relative rounded-2xl overflow-hidden border transition-all duration-300"
                           style={{ 
-                            borderColor: isOpen ? `${activeExp.color}40` : 'rgba(255, 255, 255, 0.05)',
+                            borderColor: isOpen ? (theme === 'light' ? `${getLightModeColor(activeExp.color)}40` : `${activeExp.color}40`) : 'rgba(255, 255, 255, 0.05)',
                             backgroundColor: isOpen ? 'rgba(255, 255, 255, 0.02)' : 'transparent'
                           }}
                         >
@@ -248,7 +277,7 @@ export const ExperienceSection = () => {
                               </span>
                             </div>
                             {isOpen ? (
-                              <ChevronUp size={14} style={{ color: activeExp.color }} />
+                              <ChevronUp size={14} style={{ color: theme === 'light' ? getLightModeColor(activeExp.color) : activeExp.color }} />
                             ) : (
                               <ChevronDown size={14} className="text-muted-foreground" />
                             )}
@@ -262,7 +291,7 @@ export const ExperienceSection = () => {
                                 exit={{ height: 0, opacity: 0 }}
                                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                               >
-                                <div className="px-4 pb-4 pt-1 border-t border-white/5">
+                                <div className="px-4 pb-4 pt-1 border-t border-border/30">
                                   <p 
                                     className="text-xs md:text-sm text-muted-foreground/90 mb-3 leading-relaxed font-serif italic"
                                     style={{ fontFamily: '"Times New Roman", Times, serif' }}
@@ -276,7 +305,7 @@ export const ExperienceSection = () => {
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full font-orbitron font-bold text-[9px] text-white hover:scale-105 transition-all shadow-lg"
                                     style={{ 
-                                      backgroundColor: activeExp.color,
+                                      backgroundColor: theme === 'light' ? getLightModeColor(activeExp.color) : activeExp.color,
                                       boxShadow: `0 8px 20px -6px ${activeExp.color}80`
                                     }}
                                     whileHover={{ scale: 1.05 }}
@@ -306,10 +335,10 @@ export const ExperienceSection = () => {
                         key={skill} 
                         className="px-3.5 py-1 rounded-full text-[10px] font-mono font-bold tracking-wide border transition-all duration-300 hover:scale-105"
                         style={{ 
-                          borderColor: `${activeExp.color}20`, 
-                          color: activeExp.color, 
-                          backgroundColor: `${activeExp.color}08`,
-                          boxShadow: `0 0 10px ${activeExp.color}05`
+                          borderColor: theme === 'light' ? `${getLightModeColor(activeExp.color)}40` : `${activeExp.color}20`, 
+                          color: theme === 'light' ? getLightModeColor(activeExp.color) : activeExp.color, 
+                          backgroundColor: theme === 'light' ? `${activeExp.color}15` : `${activeExp.color}08`,
+                          boxShadow: theme === 'light' ? `0 0 10px ${activeExp.color}10` : `0 0 10px ${activeExp.color}05`
                         }}
                       >
                         {skill}

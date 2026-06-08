@@ -173,6 +173,35 @@ export const ProjectsSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('light') ? 'light' : 'dark';
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const currentTheme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
+      setTheme(currentTheme);
+    };
+    window.addEventListener('theme-changed', handleThemeChange);
+    return () => window.removeEventListener('theme-changed', handleThemeChange);
+  }, []);
+
+  const getLightModeColor = (color: string) => {
+    if (color.startsWith('#')) {
+      let r = parseInt(color.substring(1, 3), 16);
+      let g = parseInt(color.substring(3, 5), 16);
+      let b = parseInt(color.substring(5, 7), 16);
+      r = Math.floor(r * 0.55);
+      g = Math.floor(g * 0.55);
+      b = Math.floor(b * 0.55);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+    return color;
+  };
+
   // Filter projects list
   const filteredProjects = projects.filter(p => filter === 'all' || p.group === filter);
   const selectedProject = filteredProjects[activeIndex] || filteredProjects[0];
@@ -257,7 +286,7 @@ export const ProjectsSection = () => {
 
         {/* Filter Navigation Tabs */}
         <div className="flex justify-center items-center mb-10 md:mb-16">
-          <div className="flex p-1 rounded-full social-bar-bg border border-white/5 backdrop-blur-md">
+          <div className="flex p-1 rounded-full social-bar-bg border border-border/30 backdrop-blur-md">
             {filterTabs.map((tab) => {
               const TabIcon = tab.icon;
               const isActive = filter === tab.id;
@@ -314,7 +343,7 @@ export const ProjectsSection = () => {
                     exit={{ opacity: 0, scale: 0.6 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 26 }}
                     onClick={() => handleCardClick(idx)}
-                    className="absolute w-[200px] sm:w-[280px] md:w-[350px] aspect-[4/3] rounded-3xl overflow-hidden cursor-pointer shadow-2xl transition-all duration-300 border border-white/5"
+                    className="absolute w-[200px] sm:w-[280px] md:w-[350px] aspect-[4/3] rounded-3xl overflow-hidden cursor-pointer shadow-2xl transition-all duration-300 border border-border/30"
                   >
                     <div className="w-full h-full relative group">
                       <img 
@@ -336,7 +365,7 @@ export const ProjectsSection = () => {
                       {isActive && (
                         <div 
                           className="absolute inset-0 rounded-3xl border-2 pointer-events-none transition-all duration-500"
-                          style={{ borderColor: project.accentColor }}
+                          style={{ borderColor: theme === 'light' ? getLightModeColor(project.accentColor) : project.accentColor }}
                         />
                       )}
                     </div>
@@ -351,13 +380,13 @@ export const ProjectsSection = () => {
             <div className="flex gap-4 items-center justify-center z-20 mt-4">
               <button 
                 onClick={handlePrev}
-                className="w-10 h-10 rounded-full social-bar-bg border border-white/5 flex items-center justify-center text-foreground/60 hover:text-foreground hover:border-cosmic-cyan/30 active:scale-95 transition-all duration-300"
+                className="w-10 h-10 rounded-full social-bar-bg border border-border/20 flex items-center justify-center text-foreground/60 hover:text-foreground hover:border-cosmic-cyan/30 active:scale-95 transition-all duration-300"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
 
               {/* Slider Dots */}
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full social-bar-bg border border-white/5">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full social-bar-bg border border-border/20">
                 {filteredProjects.map((_, idx) => (
                   <button
                     key={idx}
@@ -365,14 +394,18 @@ export const ProjectsSection = () => {
                     className={`h-1.5 rounded-full transition-all duration-300 ${
                       activeIndex === idx ? 'w-4' : 'w-1.5'
                     }`}
-                    style={{ backgroundColor: activeIndex === idx ? selectedProject?.accentColor || '#38BDF8' : 'rgba(255,255,255,0.15)' }}
+                    style={{ 
+                      backgroundColor: activeIndex === idx 
+                        ? (theme === 'light' ? getLightModeColor(selectedProject?.accentColor || '#38BDF8') : (selectedProject?.accentColor || '#38BDF8')) 
+                        : (theme === 'light' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.15)') 
+                    }}
                   />
                 ))}
               </div>
 
               <button 
                 onClick={handleNext}
-                className="w-10 h-10 rounded-full social-bar-bg border border-white/5 flex items-center justify-center text-foreground/60 hover:text-foreground hover:border-cosmic-cyan/30 active:scale-95 transition-all duration-300"
+                className="w-10 h-10 rounded-full social-bar-bg border border-border/20 flex items-center justify-center text-foreground/60 hover:text-foreground hover:border-cosmic-cyan/30 active:scale-95 transition-all duration-300"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -424,11 +457,11 @@ export const ProjectsSection = () => {
                     {/* Category Pill */}
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold font-orbitron tracking-widest uppercase mb-4"
                       style={{
-                        backgroundColor: `${selectedProject.accentColor}15`,
-                        color: selectedProject.accentColor
+                        backgroundColor: theme === 'light' ? `${getLightModeColor(selectedProject.accentColor)}15` : `${selectedProject.accentColor}15`,
+                        color: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor
                       }}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: selectedProject.accentColor }} />
+                      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor }} />
                       <span>{selectedProject.category}</span>
                     </div>
 
@@ -456,7 +489,7 @@ export const ProjectsSection = () => {
                     <div className="grid grid-cols-2 gap-4 mb-6 pt-4 border-t border-slate-100 dark:border-white/5">
                       {selectedProject.metrics.map((metric, mIdx) => (
                         <div key={mIdx} className="space-y-0.5">
-                          <span className="text-xl md:text-2xl font-bold font-orbitron" style={{ color: selectedProject.accentColor }}>
+                          <span className="text-xl md:text-2xl font-bold font-orbitron" style={{ color: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor }}>
                             {metric.value}
                           </span>
                           <p className="text-[8px] font-bold opacity-60 uppercase tracking-widest text-slate-500 dark:text-slate-400">
@@ -476,9 +509,9 @@ export const ProjectsSection = () => {
                         rel="noopener noreferrer"
                         className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-2xl font-orbitron font-bold text-[10px] hover:scale-105 transition-all duration-300 border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
                         style={{
-                          backgroundColor: `${selectedProject.accentColor}10`,
-                          color: selectedProject.accentColor,
-                          borderColor: `${selectedProject.accentColor}25`
+                          backgroundColor: theme === 'light' ? `${getLightModeColor(selectedProject.accentColor)}15` : `${selectedProject.accentColor}10`,
+                          color: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor,
+                          borderColor: theme === 'light' ? `${getLightModeColor(selectedProject.accentColor)}25` : `${selectedProject.accentColor}25`
                         }}
                       >
                         <Github className="w-4 h-4" />
@@ -492,8 +525,8 @@ export const ProjectsSection = () => {
                         rel="noopener noreferrer"
                         className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-2xl font-orbitron font-bold text-[10px] text-white hover:scale-105 transition-all duration-300 shadow-lg"
                         style={{
-                          backgroundColor: selectedProject.accentColor,
-                          boxShadow: `0 8px 20px -6px ${selectedProject.accentColor}60`
+                          backgroundColor: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor,
+                          boxShadow: `0 8px 20px -6px ${theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor}60`
                         }}
                       >
                         <ExternalLink className="w-4 h-4" />

@@ -1,7 +1,37 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, MapPin, Phone, ArrowUp, ExternalLink } from 'lucide-react';
 
 export const Footer = () => {
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('light') ? 'light' : 'dark';
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const handleThemeChange = () => {
+      const currentTheme = document.documentElement.classList.contains('light') ? 'light' : 'dark';
+      setTheme(currentTheme);
+    };
+    window.addEventListener('theme-changed', handleThemeChange);
+    return () => window.removeEventListener('theme-changed', handleThemeChange);
+  }, []);
+
+  const getLightModeColor = (color: string) => {
+    if (color.startsWith('#')) {
+      let r = parseInt(color.substring(1, 3), 16);
+      let g = parseInt(color.substring(3, 5), 16);
+      let b = parseInt(color.substring(5, 7), 16);
+      r = Math.floor(r * 0.55);
+      g = Math.floor(g * 0.55);
+      b = Math.floor(b * 0.55);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+    return color;
+  };
+
   const socialLinks = [
     { name: 'GitHub', icon: Github, url: 'https://github.com/Dharwin77' },
     { name: 'LinkedIn', icon: Linkedin, url: 'https://www.linkedin.com/in/dharwin-s/' },
@@ -31,7 +61,8 @@ export const Footer = () => {
 
   return (
     <motion.footer
-      className="relative pt-16 pb-8 px-6 border-t border-white/5 bg-slate-950/40 backdrop-blur-md overflow-hidden z-20"
+      id="footer"
+      className="relative pt-16 pb-8 px-6 border-t border-border/20 bg-background/50 dark:bg-slate-950/40 backdrop-blur-md overflow-hidden z-20"
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
@@ -41,7 +72,7 @@ export const Footer = () => {
       <div className="absolute top-0 left-1/4 w-[300px] h-[100px] bg-cosmic-cyan/10 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[250px] h-[150px] bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12 border-b border-white/5">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12 border-b border-border/20">
         {/* Brand Column */}
         <div className="md:col-span-5 space-y-4">
           <div className="flex items-center gap-2.5">
@@ -61,7 +92,7 @@ export const Footer = () => {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-xl social-bar-bg border border-white/5 flex items-center justify-center text-muted-foreground hover:text-cosmic-cyan hover:border-cosmic-cyan/20 transition-all duration-300 shadow-lg"
+                  className="w-9 h-9 rounded-xl social-bar-bg border border-border/20 flex items-center justify-center text-muted-foreground hover:text-cosmic-cyan hover:border-cosmic-cyan/20 transition-all duration-300 shadow-lg"
                   whileHover={{ scale: 1.1, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -166,7 +197,7 @@ export const Footer = () => {
 
         <motion.button
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="font-orbitron text-xs text-muted-foreground hover:text-cosmic-cyan transition-all duration-300 flex items-center gap-1.5 py-1.5 px-3.5 rounded-full social-bar-bg border border-white/5"
+          className="font-orbitron text-xs text-muted-foreground hover:text-cosmic-cyan transition-all duration-300 flex items-center gap-1.5 py-1.5 px-3.5 rounded-full social-bar-bg border border-border/20"
           whileHover={{ y: -3, borderColor: 'rgba(94,234,212,0.2)' }}
           whileTap={{ scale: 0.95 }}
         >
