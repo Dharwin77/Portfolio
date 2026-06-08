@@ -21,12 +21,56 @@ export const Navbar = () => {
   const [blinkingItem, setBlinkingItem] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isFooterVisible, setIsFooterVisible] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 1024);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    let observer: IntersectionObserver | null = null;
+    
+    const setupObserver = () => {
+      const footerElement = document.querySelector('footer');
+      if (footerElement) {
+        observer = new IntersectionObserver(
+          ([entry]) => {
+            setIsFooterVisible(entry.isIntersecting);
+          },
+          {
+            root: null,
+            rootMargin: '0px 0px 0px 0px',
+            threshold: 0.05,
+          }
+        );
+        observer.observe(footerElement);
+      }
+    };
+
+    setupObserver();
+
+    let retryCount = 0;
+    const retryInterval = setInterval(() => {
+      if (observer) {
+        clearInterval(retryInterval);
+        return;
+      }
+      setupObserver();
+      retryCount++;
+      if (retryCount > 10) {
+        clearInterval(retryInterval);
+      }
+    }, 200);
+
+    return () => {
+      clearInterval(retryInterval);
+      if (observer) {
+        observer.disconnect();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -210,7 +254,7 @@ export const Navbar = () => {
       </AnimatePresence>
 
       <AnimatePresence>
-        {isScrolled && (
+        {isScrolled && !isFooterVisible && (
           <motion.nav
             className="hidden lg:flex fixed left-6 top-0 bottom-0 z-50 flex-col justify-center"
             initial={{ x: -100, opacity: 0 }}
