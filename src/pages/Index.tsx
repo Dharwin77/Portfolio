@@ -8,6 +8,7 @@ import { ProjectsSection } from '@/components/sections/ProjectsSection';
 import { CertificationsSection } from '@/components/sections/CertificationsSection';
 import { ExperienceSection } from '@/components/sections/ExperienceSection';
 import { ContactSection } from '@/components/sections/ContactSection';
+import { Footer } from '@/components/Footer';
 
 // Memoize all sections to prevent unnecessary re-renders during scroll
 const MemoHome = memo(HomeSection);
@@ -16,6 +17,7 @@ const MemoProjects = memo(ProjectsSection);
 const MemoCerts = memo(CertificationsSection);
 const MemoExperience = memo(ExperienceSection);
 const MemoContact = memo(ContactSection);
+const MemoFooter = memo(Footer);
 
 const Index = () => {
   useEffect(() => {
@@ -43,6 +45,7 @@ const Index = () => {
           <MemoExperience />
           <MemoContact />
         </main>
+        <MemoFooter />
       </motion.div>
     </>
   );
