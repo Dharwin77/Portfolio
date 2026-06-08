@@ -81,7 +81,7 @@ export const Navbar = () => {
           const scrolled = window.scrollY > 100;
           setIsScrolled(scrolled);
           const sections = navItems.map(item => item.href.substring(1));
-          const scrollPosition = window.scrollY + 100;
+          const scrollPosition = window.scrollY + window.innerHeight / 2;
           for (const section of sections) {
             const element = document.getElementById(section);
             if (element) {
