@@ -19,6 +19,7 @@ const MemoContact = memo(ContactSection);
 
 const Index = () => {
   useEffect(() => {
+    document.title = "Dharwin S | Full-Stack Developer & ML Engineer";
     // Preload fonts
     document.fonts.ready.then(() => {
       // Fonts loaded
@@ -27,10 +28,6 @@ const Index = () => {
 
   return (
     <>
-      {/* SEO Meta Tags */}
-      <title>John Doe | Software Developer & AI Engineer</title>
-      <meta name="description" content="Explore the portfolio of John Doe - a passionate software developer and AI engineer crafting innovative digital experiences. View projects, skills, and certifications in an immersive galaxy-themed interface." />
-      
       {/* Main Content */}
       <motion.div
         initial={{ opacity: 0 }}

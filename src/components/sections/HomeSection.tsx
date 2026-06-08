@@ -50,20 +50,26 @@ const CipherText = ({ text, delay = 0 }: { text: string, delay?: number }) => {
   }, [text, delay]);
 
   return (
-    <motion.h1 className="font-space-grotesk text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 flex flex-wrap justify-center lg:justify-start gap-x-1 gap-y-2 text-cosmic-cyan relative z-10">
-      {displayText.map((letter, i) => (
-        <motion.span
-          key={i}
-          className={`inline-block ${letter === ' ' ? 'w-[0.3cm] sm:w-[0.5cm]' : ''} text-cosmic-cyan select-none`}
-          whileHover={{ 
-            scale: 1.2, 
-            y: -5
-          }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          {letter === ' ' ? '\u00A0' : letter}
-        </motion.span>
-      ))}
+    <motion.h1 
+      aria-label={text}
+      className="font-space-grotesk text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black mb-2 text-cosmic-cyan relative z-10"
+    >
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true" className="flex flex-wrap justify-center lg:justify-start gap-x-1 gap-y-2">
+        {displayText.map((letter, i) => (
+          <motion.span
+            key={i}
+            className={`inline-block ${letter === ' ' ? 'w-[0.3cm] sm:w-[0.5cm]' : ''} text-cosmic-cyan select-none`}
+            whileHover={{ 
+              scale: 1.2, 
+              y: -5
+            }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            {letter === ' ' ? '\u00A0' : letter}
+          </motion.span>
+        ))}
+      </span>
     </motion.h1>
   );
 };
