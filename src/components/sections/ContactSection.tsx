@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { Send, Mail, MapPin, Phone, Github, Linkedin, Code2, Instagram } from 'lucide-react';
+import { Send, Mail, MapPin, Phone, Github, Linkedin, Code2, Instagram, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 import emailjs from '@emailjs/browser';
 import { EMAILJS_CONFIG } from '@/config/emailjs.config';
@@ -85,14 +85,25 @@ export const ContactSection = () => {
     }
   };
 
-  const isFormValid = formData.name.trim() !== '' &&
-    isEmailValid &&
-    formData.message.trim() !== '';
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!isFormValid) return;
+    if (!formData.name.trim()) {
+      toast.error('Please enter your name');
+      return;
+    }
+    if (!formData.email.trim()) {
+      toast.error('Please enter your email address');
+      return;
+    }
+    if (!isEmailValid) {
+      toast.error(emailError || 'Please enter a valid email address');
+      return;
+    }
+    if (!formData.message.trim()) {
+      toast.error('Please enter your message');
+      return;
+    }
 
     setIsSubmitting(true);
     setShowRocket(true);
@@ -554,17 +565,18 @@ export const ContactSection = () => {
                   />
                 </div>
 
+              <div className="flex flex-col sm:flex-row gap-4 w-full">
                 <motion.button
                   type="submit"
-                  disabled={isSubmitting || !isFormValid}
-                  className="w-full cosmic-btn text-primary-foreground flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                  whileHover={isFormValid ? { scale: 1.02 } : {}}
-                  whileTap={isFormValid ? { scale: 0.98 } : {}}
+                  disabled={isSubmitting}
+                  className="flex-1 font-orbitron text-xs sm:text-sm font-semibold tracking-wider uppercase bg-cosmic-cyan text-slate-950 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-cyan-300 hover:shadow-[0_0_25px_rgba(103,232,249,0.6)] flex items-center justify-center gap-2 py-2.5 px-5 sm:py-3 sm:px-6 rounded-full transition-all duration-300 whitespace-nowrap"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   {isSubmitting ? (
                     <>
                       <motion.div
-                        className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full"
+                        className="w-4 h-4 border-2 border-slate-950/30 border-t-slate-950 rounded-full"
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                       />
@@ -572,11 +584,24 @@ export const ContactSection = () => {
                     </>
                   ) : (
                     <>
-                      <Send size={20} />
+                      <Send size={18} />
                       Send Message
                     </>
                   )}
                 </motion.button>
+
+                <motion.a
+                  href="https://calendly.com/dharwinsangamani/30min"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 font-orbitron text-xs sm:text-sm font-semibold tracking-wider uppercase text-cosmic-cyan bg-cosmic-cyan/10 border border-cosmic-cyan/30 hover:bg-cosmic-cyan hover:text-slate-950 hover:border-cosmic-cyan hover:shadow-[0_0_25px_rgba(94,234,212,0.5)] flex items-center justify-center gap-2 py-2.5 px-5 sm:py-3 sm:px-6 rounded-full transition-all duration-300 whitespace-nowrap"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Calendar size={18} />
+                  Schedule Meeting
+                </motion.a>
+              </div>
               </div>
             </form>
           </motion.div>
