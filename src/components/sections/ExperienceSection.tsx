@@ -303,7 +303,7 @@ export const ExperienceSection = () => {
                                     href={project.liveUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full font-orbitron font-bold text-[9px] text-white hover:scale-105 transition-all shadow-lg"
+                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-orbitron font-bold text-[10px] tracking-widest text-white hover:scale-105 transition-all shadow-lg"
                                     style={{ 
                                       backgroundColor: theme === 'light' ? getLightModeColor(activeExp.color) : activeExp.color,
                                       boxShadow: `0 8px 20px -6px ${activeExp.color}80`
@@ -311,7 +311,7 @@ export const ExperienceSection = () => {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                   >
-                                    <Globe size={11} />
+                                    <Globe size={12} />
                                     <span>LIVE PROJECT</span>
                                   </motion.a>
                                 </div>
