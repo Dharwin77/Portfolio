@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
-import { Github, ExternalLink, ChevronLeft, ChevronRight, Sparkles, Code, LayoutGrid, Rocket, X } from 'lucide-react';
+import { Github, ExternalLink, ChevronLeft, ChevronRight, Sparkles, Code, LayoutGrid, X } from 'lucide-react';
 
 interface Project {
   id: number;
@@ -172,6 +172,10 @@ export const ProjectsSection = () => {
   const [filter, setFilter] = useState<'all' | 'ai' | 'web'>('all');
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const scrollCooldown = useRef(false);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
@@ -209,19 +213,69 @@ export const ProjectsSection = () => {
   // Reset active index when filter changes
   useEffect(() => {
     setActiveIndex(0);
+    setIsModalOpen(false);
   }, [filter]);
 
-  // Lock background scroll when modal is open
+  // Close panel when active card changes
   useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
+    setIsModalOpen(false);
+  }, [activeIndex]);
+
+  // Horizontal scroll / wheel navigation on the carousel
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+
+    const navigate = (direction: 1 | -1) => {
+      if (scrollCooldown.current) return;
+      scrollCooldown.current = true;
+      setActiveIndex((prev) => {
+        const len = filteredProjects.length;
+        return (prev + direction + len) % len;
+      });
+      setTimeout(() => { scrollCooldown.current = false; }, 650);
     };
-  }, [isModalOpen]);
+
+    const onWheel = (e: WheelEvent) => {
+      const absX = Math.abs(e.deltaX);
+      const absY = Math.abs(e.deltaY);
+
+      // Only intercept when horizontal scroll dominates
+      if (absX > absY && absX > 20) {
+        e.preventDefault();
+        if (e.deltaX > 20) navigate(1);
+        else if (e.deltaX < -20) navigate(-1);
+      }
+      // Vertical scroll falls through → page scrolls normally
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      if (touchStartX.current === null || touchStartY.current === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      const dy = e.changedTouches[0].clientY - touchStartY.current;
+      // Only treat as horizontal swipe if horizontal movement dominates
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        navigate(dx < 0 ? 1 : -1);
+      }
+      touchStartX.current = null;
+      touchStartY.current = null;
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('touchstart', onTouchStart, { passive: true });
+    el.addEventListener('touchend', onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchend', onTouchEnd);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredProjects.length]);
 
   const handlePrev = () => {
     setActiveIndex((prev) => (prev - 1 + filteredProjects.length) % filteredProjects.length);
@@ -233,7 +287,7 @@ export const ProjectsSection = () => {
 
   const handleCardClick = (idx: number) => {
     if (idx === activeIndex) {
-      setIsModalOpen(true);
+      setIsModalOpen((prev) => !prev);
     } else {
       setActiveIndex(idx);
     }
@@ -243,7 +297,6 @@ export const ProjectsSection = () => {
     let diff = idx - activeIndex;
     const len = filteredProjects.length;
 
-    // Handle circular offsets
     if (diff < -len / 2) diff += len;
     if (diff > len / 2) diff -= len;
 
@@ -261,14 +314,18 @@ export const ProjectsSection = () => {
     { id: 'web', label: 'Web & Case Studies', icon: Code }
   ] as const;
 
+  const accentColor = selectedProject
+    ? (theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor)
+    : '#06B6D4';
+
   return (
-    <section 
-      id="projects" 
-      className="section-container relative overflow-hidden flex flex-col items-center justify-center py-16 md:py-28 translate-z-0" 
+    <section
+      id="projects"
+      className="section-container relative overflow-hidden flex flex-col items-center justify-center py-16 md:py-28 translate-z-0"
       ref={ref}
     >
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col items-center">
-        
+
         {/* Section Header */}
         <motion.div
           className="text-center mb-10"
@@ -317,9 +374,13 @@ export const ProjectsSection = () => {
 
         {/* 3D Coverflow Card Slider */}
         <div className="w-full relative flex flex-col items-center justify-center">
-          
+
           {/* Card Carousel Area */}
-          <div className="relative h-[250px] sm:h-[320px] md:h-[380px] w-full max-w-4xl flex items-center justify-center overflow-hidden preserve-3d perspective-1000 py-6">
+          <div
+            ref={carouselRef}
+            className="relative h-[250px] sm:h-[320px] md:h-[380px] w-full max-w-4xl flex items-center justify-center overflow-hidden preserve-3d perspective-1000 py-6 cursor-grab active:cursor-grabbing select-none"
+            style={{ touchAction: 'pan-y' }}
+          >
             <AnimatePresence initial={false}>
               {filteredProjects.map((project, idx) => {
                 const { isActive, isVisible, diff } = getCardProps(idx);
@@ -328,9 +389,7 @@ export const ProjectsSection = () => {
                 return (
                   <motion.div
                     key={project.id}
-                    style={{
-                      transformStyle: 'preserve-3d',
-                    }}
+                    style={{ transformStyle: 'preserve-3d' }}
                     initial={{ opacity: 0, scale: 0.6 }}
                     animate={{
                       x: diff * (typeof window !== 'undefined' && window.innerWidth < 640 ? 110 : 220),
@@ -346,8 +405,8 @@ export const ProjectsSection = () => {
                     className="absolute w-[200px] sm:w-[280px] md:w-[350px] aspect-[4/3] rounded-3xl overflow-hidden cursor-pointer shadow-2xl transition-all duration-300 border border-border/30"
                   >
                     <div className="w-full h-full relative group">
-                      <img 
-                        src={project.image} 
+                      <img
+                        src={project.image}
                         alt={project.title}
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
@@ -360,10 +419,10 @@ export const ProjectsSection = () => {
                           {project.title}
                         </h4>
                       </div>
-                      
+
                       {/* Active project highlight aura */}
                       {isActive && (
-                        <div 
+                        <div
                           className="absolute inset-0 rounded-3xl border-2 pointer-events-none transition-all duration-500"
                           style={{ borderColor: theme === 'light' ? getLightModeColor(project.accentColor) : project.accentColor }}
                         />
@@ -375,10 +434,10 @@ export const ProjectsSection = () => {
             </AnimatePresence>
           </div>
 
-          {/* Navigation Arrows */}
+          {/* Navigation Arrows + Dots */}
           {filteredProjects.length > 1 && (
             <div className="flex gap-4 items-center justify-center z-20 mt-4">
-              <button 
+              <button
                 onClick={handlePrev}
                 className="w-10 h-10 rounded-full social-bar-bg border border-border/20 flex items-center justify-center text-foreground/60 hover:text-foreground hover:border-cosmic-cyan/30 active:scale-95 transition-all duration-300"
               >
@@ -394,16 +453,16 @@ export const ProjectsSection = () => {
                     className={`h-1.5 rounded-full transition-all duration-300 ${
                       activeIndex === idx ? 'w-4' : 'w-1.5'
                     }`}
-                    style={{ 
-                      backgroundColor: activeIndex === idx 
-                        ? (theme === 'light' ? getLightModeColor(selectedProject?.accentColor || '#38BDF8') : (selectedProject?.accentColor || '#38BDF8')) 
-                        : (theme === 'light' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.15)') 
+                    style={{
+                      backgroundColor: activeIndex === idx
+                        ? (theme === 'light' ? getLightModeColor(selectedProject?.accentColor || '#38BDF8') : (selectedProject?.accentColor || '#38BDF8'))
+                        : (theme === 'light' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.15)')
                     }}
                   />
                 ))}
               </div>
 
-              <button 
+              <button
                 onClick={handleNext}
                 className="w-10 h-10 rounded-full social-bar-bg border border-border/20 flex items-center justify-center text-foreground/60 hover:text-foreground hover:border-cosmic-cyan/30 active:scale-95 transition-all duration-300"
               >
@@ -411,135 +470,161 @@ export const ProjectsSection = () => {
               </button>
             </div>
           )}
-        </div>
 
-        {/* Modal Detail Overlay */}
-        <AnimatePresence>
-          {isModalOpen && selectedProject && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              {/* Backdrop */}
+          {/* ── Inline Detail Panel ── expands below carousel inside the section ── */}
+          <AnimatePresence>
+            {isModalOpen && selectedProject && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsModalOpen(false)}
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-              />
-
-              {/* Modal Card */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 30 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 30 }}
-                transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-                className="relative w-full max-w-4xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row z-10"
+                key={`panel-${selectedProject.id}`}
+                initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                animate={{ opacity: 1, height: 'auto', marginTop: 28 }}
+                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                transition={{ type: 'spring', damping: 28, stiffness: 260 }}
+                className="w-full max-w-4xl overflow-hidden"
               >
-                {/* Close Button */}
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-white/10 flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all z-20"
+                <div
+                  className="relative rounded-[2rem] overflow-hidden flex flex-col md:flex-row shadow-2xl"
+                  style={{
+                    background: theme === 'light' ? '#ffffff' : 'rgba(2,8,23,0.95)',
+                    border: `1px solid ${selectedProject.accentColor}35`,
+                    boxShadow: `0 0 60px -10px ${selectedProject.accentColor}35`
+                  }}
                 >
-                  <X className="w-4 h-4" />
-                </button>
-
-                {/* Left Side: Image */}
-                <div className="flex-1 min-h-[250px] md:min-h-0 relative">
-                  <img
-                    src={selectedProject.image}
-                    alt={selectedProject.title}
-                    className="absolute inset-0 w-full h-full object-cover"
+                  {/* Top accent line */}
+                  <div
+                    className="absolute top-0 left-0 right-0 h-[2px]"
+                    style={{
+                      background: `linear-gradient(90deg, transparent, ${selectedProject.accentColor}, transparent)`
+                    }}
                   />
-                </div>
 
-                {/* Right Side: Content */}
-                <div className="flex-1 p-8 md:p-12 flex flex-col justify-between">
-                  <div>
-                    {/* Category Pill */}
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold font-orbitron tracking-widest uppercase mb-4"
-                      style={{
-                        backgroundColor: theme === 'light' ? `${getLightModeColor(selectedProject.accentColor)}15` : `${selectedProject.accentColor}15`,
-                        color: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor
-                      }}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor }} />
-                      <span>{selectedProject.category}</span>
-                    </div>
+                  {/* Close Button */}
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center z-20 transition-all duration-200 hover:scale-110"
+                    style={{
+                      background: `${selectedProject.accentColor}18`,
+                      color: accentColor,
+                      border: `1px solid ${selectedProject.accentColor}30`
+                    }}
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
 
-                    {/* Title */}
-                    <h3 className="text-3xl md:text-4xl font-extrabold font-orbitron tracking-tight text-slate-900 dark:text-white mb-4 uppercase">
-                      {selectedProject.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-xs sm:text-sm leading-relaxed text-slate-600 dark:text-slate-300 mb-6 font-medium">
-                      "{selectedProject.description}"
-                    </p>
-
-                    {/* Custom Enterprise Innovation Standard Badge */}
-                    <div className="flex items-center gap-2.5 py-2 px-4 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 w-fit mb-6">
-                      <div className="w-6 h-6 rounded-full bg-red-500/10 dark:bg-red-500/20 flex items-center justify-center text-red-500 dark:text-red-400">
-                        <Rocket className="w-3.5 h-3.5" />
-                      </div>
-                      <span className="text-[10px] font-orbitron font-bold text-red-600 dark:text-red-400 uppercase tracking-widest">
-                        Enterprise Innovation Standard
-                      </span>
-                    </div>
-
-                    {/* Metrics Grid */}
-                    <div className="grid grid-cols-2 gap-4 mb-6 pt-4 border-t border-slate-100 dark:border-white/5">
-                      {selectedProject.metrics.map((metric, mIdx) => (
-                        <div key={mIdx} className="space-y-0.5">
-                          <span className="text-xl md:text-2xl font-bold font-orbitron" style={{ color: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor }}>
-                            {metric.value}
-                          </span>
-                          <p className="text-[8px] font-bold opacity-60 uppercase tracking-widest text-slate-500 dark:text-slate-400">
-                            {metric.label}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
+                  {/* Left: Image */}
+                  <div className="w-full md:w-[44%] min-h-[200px] md:min-h-[300px] relative flex-shrink-0 overflow-hidden">
+                    <img
+                      src={selectedProject.image}
+                      alt={selectedProject.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-slate-950/50 hidden md:block" />
                   </div>
 
-                  {/* Bottom Actions */}
-                  <div className="flex gap-3 pt-4 border-t border-slate-100 dark:border-white/5">
-                    {selectedProject.githubUrl && (
-                      <a
-                        href={selectedProject.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-2xl font-orbitron font-bold text-[10px] hover:scale-105 transition-all duration-300 border border-slate-200 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
+                  {/* Right: Content */}
+                  <div className="flex-1 p-7 md:p-10 flex flex-col justify-between">
+                    <div>
+                      {/* Category Pill */}
+                      <div
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-bold font-orbitron tracking-widest uppercase mb-3"
                         style={{
-                          backgroundColor: theme === 'light' ? `${getLightModeColor(selectedProject.accentColor)}15` : `${selectedProject.accentColor}10`,
-                          color: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor,
-                          borderColor: theme === 'light' ? `${getLightModeColor(selectedProject.accentColor)}25` : `${selectedProject.accentColor}25`
+                          backgroundColor: `${selectedProject.accentColor}15`,
+                          color: accentColor
                         }}
                       >
-                        <Github className="w-4 h-4" />
-                        <span>GITHUB</span>
-                      </a>
-                    )}
-                    {selectedProject.liveUrl && (
-                      <a
-                        href={selectedProject.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-2xl font-orbitron font-bold text-[10px] text-white hover:scale-105 transition-all duration-300 shadow-lg"
-                        style={{
-                          backgroundColor: theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor,
-                          boxShadow: `0 8px 20px -6px ${theme === 'light' ? getLightModeColor(selectedProject.accentColor) : selectedProject.accentColor}60`
-                        }}
+                        <span
+                          className="w-1.5 h-1.5 rounded-full animate-pulse"
+                          style={{ backgroundColor: selectedProject.accentColor }}
+                        />
+                        <span>{selectedProject.category}</span>
+                      </div>
+
+                      {/* Title */}
+                      <h3
+                        className="text-2xl md:text-3xl font-extrabold font-orbitron tracking-tight mb-3 uppercase"
+                        style={{ color: theme === 'light' ? '#0f172a' : '#ffffff' }}
                       >
-                        <ExternalLink className="w-4 h-4" />
-                        <span>LIVE</span>
-                      </a>
-                    )}
+                        {selectedProject.title}
+                      </h3>
+
+                      {/* Description */}
+                      <p
+                        className="text-xs sm:text-sm leading-relaxed mb-5 font-medium"
+                        style={{ color: theme === 'light' ? '#475569' : '#94a3b8' }}
+                      >
+                        "{selectedProject.description}"
+                      </p>
+
+                      {/* Metrics */}
+                      <div
+                        className="grid grid-cols-2 gap-4 mb-5 pt-4"
+                        style={{ borderTop: `1px solid ${selectedProject.accentColor}18` }}
+                      >
+                        {selectedProject.metrics.map((metric, mIdx) => (
+                          <div key={mIdx} className="space-y-0.5">
+                            <span
+                              className="text-xl md:text-2xl font-bold font-orbitron"
+                              style={{ color: accentColor }}
+                            >
+                              {metric.value}
+                            </span>
+                            <p
+                              className="text-[8px] font-bold opacity-60 uppercase tracking-widest"
+                              style={{ color: theme === 'light' ? '#64748b' : '#94a3b8' }}
+                            >
+                              {metric.label}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div
+                      className="flex gap-3 pt-4"
+                      style={{ borderTop: `1px solid ${selectedProject.accentColor}18` }}
+                    >
+                      {selectedProject.githubUrl && (
+                        <a
+                          href={selectedProject.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-2xl font-orbitron font-bold text-[10px] hover:scale-105 transition-all duration-300"
+                          style={{
+                            backgroundColor: `${selectedProject.accentColor}12`,
+                            color: accentColor,
+                            border: `1px solid ${selectedProject.accentColor}28`
+                          }}
+                        >
+                          <Github className="w-4 h-4" />
+                          <span>GITHUB</span>
+                        </a>
+                      )}
+                      {selectedProject.liveUrl && (
+                        <a
+                          href={selectedProject.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-2xl font-orbitron font-bold text-[10px] text-white hover:scale-105 transition-all duration-300"
+                          style={{
+                            backgroundColor: theme === 'light'
+                              ? getLightModeColor(selectedProject.accentColor)
+                              : selectedProject.accentColor,
+                            boxShadow: `0 8px 20px -6px ${selectedProject.accentColor}60`
+                          }}
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                          <span>LIVE</span>
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
+            )}
+          </AnimatePresence>
 
+        </div>
       </div>
     </section>
   );
