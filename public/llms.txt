@@ -1,0 +1,49 @@
+# Dharwin S - AI & Full-Stack Developer Portfolio
+
+> Dharwin S is an AI & Data Science student and professional Full-Stack Developer specializing in React, Python, machine learning, cloud computing, and intelligent web applications.
+
+## About
+
+Dharwin S is a B.Tech student in Artificial Intelligence & Data Science with hands-on experience building production-grade AI systems, full-stack web applications, and cloud-integrated platforms. He bridges the gap between complex machine learning models and user-centric web interfaces.
+
+## Skills & Expertise
+
+- **Frontend**: React.js, TypeScript, JavaScript, HTML5, CSS3, Tailwind CSS, Framer Motion
+- **Backend**: Node.js, Python, REST APIs, MongoDB, SQL, Oracle APEX
+- **AI & Machine Learning**: PyTorch, YOLO, NLP, LLMs, Computer Vision, Vector Search
+- **Cloud**: Microsoft Azure, Oracle Cloud Infrastructure (OCI), Vercel
+
+## Projects
+
+- **Retail Management Platform**: Full-stack supermarket inventory and POS system (React + Node.js + MongoDB)
+- **Healix Doctor Appointment System**: Telehealth platform connecting patients and doctors
+- **YOLO Object Detection**: Real-time computer vision with 98.4% accuracy, 12ms latency
+- **ResumeIQ Analyzer**: AI-powered resume parsing and ATS scoring tool
+- **Fake News Prediction**: ML classifier using NLP for news authenticity detection
+- **Voice Analyzer**: Deep learning speech emotion and tone analysis platform
+- **House Design Platform**: Interactive 3D house design with drag-and-drop customization
+
+## Certifications
+
+- Microsoft Azure AI Engineer Associate
+- Oracle Java SE 17 Developer
+- Oracle Cloud Infrastructure (OCI) Data Science Professional
+- OCI Generative AI Professional
+- OCI AI Foundations Associate
+- Oracle APEX Cloud Developer
+- Oracle AI Vector Search Professional
+- MongoDB Associate Developer
+- NVIDIA Generative AI with Diffusion Models
+- NVIDIA PyTorch (Getting Started with AI)
+
+## Contact & Links
+
+- **Portfolio**: https://dharwin.tech
+- **GitHub**: https://github.com/Dharwin77
+- **LinkedIn**: https://www.linkedin.com/in/dharwin-s/
+- **LeetCode**: https://leetcode.com/u/dharwins/
+- **Email**: Available via contact form at https://dharwin.tech/#contact
+
+## Optional
+
+- sitemap: https://dharwin.tech/sitemap.xml
