@@ -1,5 +1,5 @@
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import ProfileCard from '../ProfileCard';
 
 const stats = [
@@ -8,9 +8,6 @@ const stats = [
   { label: 'Certifications', value: '4' },
   { label: 'Languages', value: '3' },
 ];
-
-// Configuration: Add your profile photo
-const PROFILE_PHOTO_URL = '/profile1.jpg';
 
 // Configuration: Profile card details
 const PROFILE_CONFIG = {
@@ -24,13 +21,32 @@ const PROFILE_CONFIG = {
 export const AboutSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, margin: '-100px' });
+  const [activePhoto, setActivePhoto] = useState<'profile' | 'social' | 'professional'>('profile');
+
+  const photos = {
+    profile: {
+      url: '/dharwin-s-profile.jpg',
+      label: 'Official',
+      alt: 'Dharwin S - Official Portrait'
+    },
+    social: {
+      url: '/dharwin-s-social.jpg',
+      label: 'Social',
+      alt: 'Dharwin S - Developer Persona'
+    },
+    professional: {
+      url: '/dharwin-s-professional.jpg',
+      label: 'Professional',
+      alt: 'Dharwin S - Technical Portrait'
+    }
+  };
 
   return (
     <section id="about" className="section-container" ref={ref}>
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-12"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
@@ -44,9 +60,59 @@ export const AboutSection = () => {
         </motion.div>
 
         {/* Content Section */}
-        <div className="flex justify-end">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Side: Profile Photo Card with Toggle */}
           <motion.div
-            className="w-full lg:w-3/5 xl:w-1/2"
+            className="lg:col-span-5 flex flex-col items-center justify-center gap-4"
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <div className="relative w-full max-w-[340px]">
+              <ProfileCard
+                name={PROFILE_CONFIG.name}
+                title={PROFILE_CONFIG.title}
+                handle={PROFILE_CONFIG.handle}
+                status={PROFILE_CONFIG.status}
+                contactText={PROFILE_CONFIG.contactText}
+                avatarUrl={photos[activePhoto].url}
+                showUserInfo={true}
+                enableTilt={true}
+                enableMobileTilt={false}
+                socialLinks={{
+                  github: 'https://github.com/Dharwin77',
+                  linkedin: 'https://www.linkedin.com/in/dharwin-s/',
+                  instagram: 'https://www.instagram.com/s.dharwin_24',
+                  leetcode: 'https://leetcode.com/u/dharwins/'
+                }}
+                onContactClick={() => {
+                  const contactSection = document.getElementById('contact');
+                  contactSection?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              />
+            </div>
+            
+            {/* Photo Toggles */}
+            <div className="flex gap-2 p-1.5 rounded-xl bg-card/40 border border-border/10 backdrop-blur-sm mt-2">
+              {(Object.keys(photos) as Array<keyof typeof photos>).map((key) => (
+                <button
+                  key={key}
+                  onClick={() => setActivePhoto(key)}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-orbitron transition-all duration-300 ${
+                    activePhoto === key
+                      ? 'bg-cosmic-cyan text-slate-950 shadow-[0_0_15px_rgba(94,234,212,0.4)] font-bold'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {photos[key].label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Right Side: Text & Stats */}
+          <motion.div
+            className="lg:col-span-7"
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
@@ -63,7 +129,7 @@ export const AboutSection = () => {
               </p>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                 {stats.map((stat, index) => (
                   <motion.div
                     key={stat.label}
