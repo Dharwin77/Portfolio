@@ -19,9 +19,23 @@ export default defineConfig(({ mode }) => ({
     drop: mode === "production" ? ["console", "debugger"] : [],
   },
   build: {
-    minify: "esbuild",
+    minify: mode === "production" ? "terser" : "esbuild",
     cssMinify: true,
     sourcemap: false,
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        evaluate: false, // required for lottie-web which uses eval()
+        passes: 2,
+      },
+      mangle: {
+        safari10: true,
+      },
+      format: {
+        comments: false,
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {
