@@ -147,7 +147,8 @@ export const HomeSection = () => {
               />
               <motion.img
                 src="/profile1.jpg"
-                alt="Dharwin"
+                alt="Dharwin S - Professional Full-Stack Developer and ML Engineer, profile photo"
+                title="Dharwin S | Full-Stack Developer & ML Engineer"
                 className="w-full h-full rounded-full object-cover transition-all duration-500 group-hover:brightness-110 group-hover:contrast-110 shadow-[0_0_50px_rgba(94,234,212,0.1)]"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}

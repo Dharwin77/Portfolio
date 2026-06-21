@@ -35,6 +35,18 @@ export default defineConfig(({ mode }) => ({
             if (id.includes("lottie-web") || id.includes("lottie-react")) {
               return "vendor-lottie";
             }
+            if (id.includes("react-dom") || id.includes("react/")) {
+              return "vendor-react";
+            }
+            if (id.includes("@radix-ui")) {
+              return "vendor-radix";
+            }
+            if (id.includes("lucide-react") || id.includes("@heroicons")) {
+              return "vendor-icons";
+            }
+            if (id.includes("emailjs") || id.includes("@emailjs")) {
+              return "vendor-emailjs";
+            }
             return "vendor";
           }
         },

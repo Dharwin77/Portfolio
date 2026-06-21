@@ -264,7 +264,7 @@ export const CertificationsSection = () => {
                   <div className="w-full h-full relative rounded-2xl overflow-hidden shadow-2xl bg-black/5 dark:bg-black/40 border border-border/30 backdrop-blur-sm">
                     <img
                       src={activeCert.image} 
-                      alt={activeCert.name}
+                      alt={`${activeCert.name} Certificate by ${activeOrg.name} - Dharwin S`}
                       className="absolute inset-0 w-full h-full object-contain p-4 transition-transform duration-1000 group-hover:scale-[1.02]"
                     />
                   </div>

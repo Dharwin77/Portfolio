@@ -74,7 +74,7 @@ const projects: Project[] = [
     ],
     accentColor: '#10B981',
     githubUrl: 'https://github.com/Dharwin77/Yolo_Object_Detection',
-    liveUrl: 'https://dharwin-yolo.vercel.app',
+    // liveUrl removed - deployment not currently active
     group: 'ai'
   },
   {
@@ -89,7 +89,7 @@ const projects: Project[] = [
     ],
     accentColor: '#8B5CF6',
     githubUrl: 'https://github.com/Dharwin77/ResumeIQ',
-    liveUrl: 'https://dharwin-resumeiq.vercel.app',
+    // liveUrl removed - deployment not currently active
     group: 'ai'
   },
   {
@@ -104,7 +104,7 @@ const projects: Project[] = [
     ],
     accentColor: '#F59E0B',
     githubUrl: 'https://github.com/Dharwin77/Fake_News_Prediction_Using_ML',
-    liveUrl: 'https://dharwin-news-detection.vercel.app/',
+    // liveUrl removed - deployment not currently active
     group: 'ai'
   },
   {
@@ -119,7 +119,7 @@ const projects: Project[] = [
     ],
     accentColor: '#EC4899',
     githubUrl: 'https://github.com/Dharwin77/Voice-Analyzer',
-    liveUrl: 'https://dharwin-voice-analyzer.vercel.app/',
+    // liveUrl removed - deployment not currently active
     group: 'ai'
   },
   {
@@ -405,11 +405,11 @@ export const ProjectsSection = () => {
                     className="absolute w-[200px] sm:w-[280px] md:w-[350px] aspect-[4/3] rounded-3xl overflow-hidden cursor-pointer shadow-2xl transition-all duration-300 border border-border/30"
                   >
                     <div className="w-full h-full relative group">
-                      <img
-                        src={project.image}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
+                        <img
+                          src={project.image}
+                          alt={`${project.title} - ${project.category} project by Dharwin S`}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
                       {/* Gradient Backdrop overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent p-5 flex flex-col justify-end">
                         <span className="text-[8px] font-bold font-orbitron tracking-widest text-cosmic-cyan uppercase mb-1">
@@ -515,7 +515,7 @@ export const ProjectsSection = () => {
                   <div className="w-full md:w-[44%] min-h-[200px] md:min-h-[300px] relative flex-shrink-0 overflow-hidden">
                     <img
                       src={selectedProject.image}
-                      alt={selectedProject.title}
+                      alt={`${selectedProject.title} - ${selectedProject.category} project preview`}
                       className="absolute inset-0 w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent to-slate-950/50 hidden md:block" />
