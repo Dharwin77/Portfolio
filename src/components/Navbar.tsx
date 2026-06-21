@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Menu, X, FileText, Home, User, Code, FolderKanban, Award, Briefcase, Mail, Sun, Moon } from 'lucide-react';
-import LottieLogo from './LottieLogo';
+const LottieLogo = lazy(() => import('./LottieLogo'));
 import { ThemeToggle } from './ThemeToggle';
 
 const navItems = [
@@ -149,7 +149,9 @@ export const Navbar = () => {
                   whileHover={{ scale: 1.05 }}
                   onClick={(e) => handleNavClick(e, '#home', 'Home')}
                 >
-                  <LottieLogo className="absolute top-1/2 left-0 -translate-y-1/2 h-16 w-16 md:h-24 md:w-24" />
+                  <Suspense fallback={<div className="absolute top-1/2 left-0 -translate-y-1/2 h-16 w-16 md:h-24 md:w-24 bg-transparent" />}>
+                    <LottieLogo className="absolute top-1/2 left-0 -translate-y-1/2 h-16 w-16 md:h-24 md:w-24" />
+                  </Suspense>
                 </motion.a>
 
                 <div className="hidden lg:flex items-center gap-4 xl:gap-6">
