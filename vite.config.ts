@@ -15,34 +15,16 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  esbuild: {
-    drop: mode === "production" ? ["console", "debugger"] : [],
-  },
   build: {
-    minify: mode === "production" ? "terser" : "esbuild",
+    // Use esbuild (not terser) — terser was breaking React module initialization
+    // in the vendor chunk (createContext error). esbuild is safe and fast.
+    minify: "esbuild",
     cssMinify: true,
     sourcemap: false,
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-        evaluate: false, // required for lottie-web which uses eval()
-        passes: 2,
-      },
-      mangle: {
-        safari10: true,
-      },
-      format: {
-        comments: false,
-      },
-    },
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            if (id.includes("three") || id.includes("@react-three") || id.includes("ogl")) {
-              return "vendor-three";
-            }
             if (id.includes("framer-motion")) {
               return "vendor-motion";
             }
