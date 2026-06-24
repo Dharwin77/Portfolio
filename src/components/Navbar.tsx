@@ -3,19 +3,22 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { Menu, X, FileText, Home, User, Code, FolderKanban, Award, Briefcase, Mail, Sun, Moon } from 'lucide-react';
 const LottieLogo = lazy(() => import('./LottieLogo'));
 import { ThemeToggle } from './ThemeToggle';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const navItems = [
-  { name: 'Home', href: '#home', icon: Home },
-  { name: 'Skills', href: '#skills', icon: Code },
-  { name: 'Projects', href: '#projects', icon: FolderKanban },
-  { name: 'Certifications', href: '#certifications', icon: Award },
-  { name: 'Experience', href: '#experience', icon: Briefcase },
-  { name: 'Contact', href: '#contact', icon: Mail },
+  { name: 'Home', href: '/#home', icon: Home },
+  { name: 'Skills', href: '/#skills', icon: Code },
+  { name: 'Projects', href: '/#projects', icon: FolderKanban },
+  { name: 'Certifications', href: '/#certifications', icon: Award },
+  { name: 'Experience', href: '/#experience', icon: Briefcase },
+  { name: 'Contact', href: '/#contact', icon: Mail },
 ];
 
 const RESUME_LINK = 'https://drive.google.com/file/d/1jbN_sofgm6omlt9ITIYxjzcQIE9iMiuw/view?usp=sharing';
 
 export const Navbar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [blinkingItem, setBlinkingItem] = useState<string | null>(null);
@@ -80,7 +83,7 @@ export const Navbar = () => {
         window.requestAnimationFrame(() => {
           const scrolled = window.scrollY > 100;
           setIsScrolled(scrolled);
-          const sections = navItems.map(item => item.href.substring(1));
+          const sections = navItems.map(item => item.href.includes('#') ? item.href.split('#')[1] : item.href);
           const scrollPosition = window.scrollY + window.innerHeight / 2;
           for (const section of sections) {
             const element = document.getElementById(section);
@@ -108,7 +111,14 @@ export const Navbar = () => {
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, name: string) => {
     e.preventDefault();
-    const sectionId = href.substring(1);
+    const sectionId = href.includes('#') ? href.split('#')[1] : href;
+    
+    if (location.pathname !== '/') {
+      navigate(`/#${sectionId}`);
+      setIsOpen(false);
+      return;
+    }
+
     const element = document.getElementById(sectionId);
     if (element) {
       window.scrollTo({
@@ -185,6 +195,7 @@ export const Navbar = () => {
                       </motion.a>
                     );
                   })}
+
                   <motion.button
                     onClick={handleResumeClick}
                     className="flex items-center gap-2 px-3 xl:px-4 py-2 font-orbitron text-xs xl:text-sm bg-cosmic-cyan/10 border border-cosmic-cyan/50 rounded-lg text-cosmic-cyan hover:bg-cosmic-cyan/20 hover:border-cosmic-cyan hover:shadow-[0_0_15px_rgba(94,234,212,0.3)] transition-all duration-300 whitespace-nowrap"
@@ -237,6 +248,7 @@ export const Navbar = () => {
                           </button>
                         );
                       })}
+
                       <div className="px-3 pt-2 mt-2 border-t border-white/5">
                         <button
                           onClick={handleResumeClick}
@@ -256,7 +268,7 @@ export const Navbar = () => {
       </AnimatePresence>
 
       <AnimatePresence>
-        {isScrolled && !isFooterVisible && (
+        {isScrolled && !isFooterVisible && location.pathname === '/' && (
           <motion.nav
             className="hidden lg:flex fixed left-6 top-0 bottom-0 z-50 flex-col justify-center"
             initial={{ x: -100, opacity: 0 }}

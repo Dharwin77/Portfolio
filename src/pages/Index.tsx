@@ -1,4 +1,5 @@
 import React, { useEffect, memo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Navbar } from '@/components/Navbar';
 import { HomeSection } from '@/components/sections/HomeSection';
@@ -20,6 +21,8 @@ const MemoContact = memo(ContactSection);
 const MemoFooter = memo(Footer);
 
 const Index = () => {
+  const location = useLocation();
+
   useEffect(() => {
     document.title = "Dharwin S | Full-Stack Developer & ML Engineer";
     // Preload fonts
@@ -27,6 +30,20 @@ const Index = () => {
       // Fonts loaded
     });
   }, []);
+
+  useEffect(() => {
+    const hash = location.hash;
+    if (hash) {
+      const sectionId = hash.substring(1);
+      const timer = setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location.hash]);
 
   return (
     <>

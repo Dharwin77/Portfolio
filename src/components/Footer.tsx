@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, MapPin, Phone, ArrowUp, ExternalLink } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
       return document.documentElement.classList.contains('light') ? 'light' : 'dark';
@@ -30,16 +33,17 @@ export const Footer = () => {
   ];
 
   const quickLinks = [
-    { label: 'Home', href: '#home' },
-    { label: 'About', href: '#about' },
-    { label: 'Skills', href: '#skills' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Experience', href: '#experience' },
-    { label: 'Certifications', href: '#certifications' },
-    { label: 'Contact', href: '#contact' }
+    { label: 'Home', href: '/#home' },
+    { label: 'About', href: '/#about' },
+    { label: 'Skills', href: '/#skills' },
+    { label: 'Projects', href: '/#projects' },
+    { label: 'Experience', href: '/#experience' },
+    { label: 'Certifications', href: '/#certifications' },
+    { label: 'Contact', href: '/#contact' }
   ];
 
   const resources = [
+    { label: 'Schema Generator (SEO Tool)', href: '/tools/schema-generator', external: false },
     { label: 'GitHub Repository', href: 'https://github.com/Dharwin77/Portfolio', external: true },
     { label: 'Healix System', href: 'https://healix-doctor-appointment-system-t3.vercel.app/', external: true },
     { label: 'Supermarket POS', href: 'https://super-market-frontend-five.vercel.app', external: true },
@@ -158,6 +162,18 @@ export const Footer = () => {
               <li key={link.label}>
                 <a
                   href={link.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const sectionId = link.href.substring(1);
+                    if (location.pathname !== '/') {
+                      navigate(`/#${sectionId}`);
+                    } else {
+                      const element = document.getElementById(sectionId);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }
+                  }}
                   className="text-xs flex items-center gap-1.5 group transition-colors duration-200"
                   style={{ color: mutedText }}
                   onMouseEnter={e => (e.currentTarget.style.color = accentHighlight)}
@@ -182,25 +198,39 @@ export const Footer = () => {
           >
             Featured
           </h4>
-          <ul className="space-y-2">
+           <ul className="space-y-2">
             {resources.map((link) => (
               <li key={link.label}>
-                <a
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs flex items-center gap-1 group transition-colors duration-200"
-                  style={{ color: mutedText }}
-                  onMouseEnter={e => (e.currentTarget.style.color = accentHighlight)}
-                  onMouseLeave={e => (e.currentTarget.style.color = mutedText)}
-                >
-                  <span>{link.label}</span>
-                  {link.external && (
+                {link.external ? (
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs flex items-center gap-1 group transition-colors duration-200"
+                    style={{ color: mutedText }}
+                    onMouseEnter={e => (e.currentTarget.style.color = accentHighlight)}
+                    onMouseLeave={e => (e.currentTarget.style.color = mutedText)}
+                  >
+                    <span>{link.label}</span>
                     <ExternalLink
                       className="w-2.5 h-2.5 opacity-40 group-hover:opacity-100 transition-opacity"
                     />
-                  )}
-                </a>
+                  </a>
+                ) : (
+                  <a
+                    href={link.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(link.href);
+                    }}
+                    className="text-xs flex items-center gap-1 group transition-colors duration-200 font-semibold"
+                    style={{ color: accentCyan }}
+                    onMouseEnter={e => (e.currentTarget.style.color = accentHighlight)}
+                    onMouseLeave={e => (e.currentTarget.style.color = accentCyan)}
+                  >
+                    <span>{link.label}</span>
+                  </a>
+                )}
               </li>
             ))}
           </ul>
@@ -265,9 +295,17 @@ export const Footer = () => {
           <span className="font-orbitron text-xs" style={{ color: mutedText }}>
             © {new Date().getFullYear()}
           </span>
-          <span className="font-orbitron text-xs font-bold tracking-wider" style={{ color: accentHighlight }}>
+          <a
+            href="/tools/schema-generator"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate('/tools/schema-generator');
+            }}
+            className="font-orbitron text-xs font-bold tracking-wider transition-colors duration-200 hover:opacity-80 cursor-pointer"
+            style={{ color: accentHighlight }}
+          >
             DHARWIN S
-          </span>
+          </a>
           <span style={{ color: dividerColor }} className="hidden sm:inline">|</span>
           <span className="text-[10px] sm:text-xs" style={{ color: mutedText }}>
             All rights reserved. Crafted in the cosmos.
