@@ -2,7 +2,7 @@
 
 This guide will help you configure your portfolio website with all necessary credentials and personal information.
 
-## 📧 EmailJS Setup (Contact Form)
+# 📧 EmailJS Setup (Contact Form)
 
 ### Step 1: Create EmailJS Account
 1. Go to [EmailJS.com](https://www.emailjs.com/)
