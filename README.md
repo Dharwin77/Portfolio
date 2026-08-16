@@ -1,4 +1,4 @@
-# Professional Portfolio Website
+# Professional Portfolio Websit
 
 A modern, interactive portfolio website built with React, TypeScript, and Framer Motion featuring smooth animations, unique navbar effects, and a fully functional contact form.
 
