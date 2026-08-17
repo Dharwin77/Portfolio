@@ -1,4 +1,4 @@
-# Profile Card Styles Guide
+# Profile Card
 
 ## 🎨 Available Profile Card Styles
 
