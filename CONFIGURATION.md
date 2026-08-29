@@ -1,4 +1,4 @@
-# Quick Configuration Reference
+# Quick Configuration Refere
 
 All the places you need to update with your personal information:
 
