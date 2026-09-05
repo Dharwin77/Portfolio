@@ -1,4 +1,4 @@
-# Profile Card
+# Profilecard
 
 # 🎨 Available Profile Card Styles
 
