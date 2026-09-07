@@ -1,6 +1,6 @@
 # Profilecard
 
-# 🎨 Available Profile Card Styles
+# 🎨 Available Profile Card Style
 
 Your portfolio now features **4 professional profile card designs** that you can easily switch between.
 
