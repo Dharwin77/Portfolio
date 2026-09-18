@@ -1,6 +1,6 @@
 # Portfolio Setup Guide
 
-This guide will help you configure your portfolio website with all necessary credentials and personal information.
+This guide will help you configure your portfolio website with all necessary credentials and personal informations.
 
 # 📧 EmailJS Setup (Contact Form)
 
